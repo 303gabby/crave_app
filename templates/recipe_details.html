@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Personalized Recipe - Crave</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Your Personalized Recipe</h1>
+        {% if error_message %}
+            <p class="error">{{ error_message }}</p>
+        {% endif %}
+
+        {% if recipe %}
+            <div class="recipe-card">
+                <h2>{{ recipe.title }}</h2>
+                {% if recipe.image %}
+                    <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-image">
+                {% endif %}
+                <p><strong>Servings:</strong> {{ recipe.servings }}</p>
+                <p><strong>Ready in:</strong> {{ recipe.readyInMinutes }} minutes</p>
+                <p><strong>Source:</strong> <a href="{{ recipe.sourceUrl }}" target="_blank">{{ recipe.sourceUrl }}</a></p>
+
+                <h3>Ingredients:</h3>
+                {{ recipe.ingredients_html | safe }}
+
+                <h3>Instructions:</h3>
+                {{ recipe.instructions_html | safe }}
+
+                <h3>Nutritional Information:</h3>
+                {{ recipe.nutrition_html | safe }}
+            </div>
+
+            <hr>
+
+            <h2>Explore More Options</h2>
+            <form method="POST" action="{{ url_for('variation') }}">
+                <label for="variation_prompt">Try a variation of "{{ meal_idea }}" (e.g., "spicier", "vegetarian version"):</label>
+                <input type="text" id="variation_prompt" name="variation_prompt" required>
+                <button type="submit">Get Variation</button>
+            </form>
+
+            <p><a href="{{ url_for('index') }}">Start a New Recipe</a></p>
+            <p><a href="{{ url_for('view_history') }}">View Recipe History</a></p>
+        {% else %}
+            <p>No recipe found. Please go back and try again.</p>
+            <p><a href="{{ url_for('index') }}">Go Back Home</a></p>
+        {% endif %}
+    </div>
+</body>
+</html>

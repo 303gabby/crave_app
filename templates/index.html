@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crave - Personalized Meals for College Students</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Crave! ✨</h1>
+        <p>Let's cook something delicious and affordable.</p>
+        <p>You will be asked for your budget, mood, kitchen tools, time, and dietary restrictions.</p>
+        <p>From there, we will generate a meal suited to your tastes using GenAI and the Tasty API.</p>
+        <p>If a suggested meal isn't found on Tasty, our GenAI will generate a recipe for you. We hope you enjoy what we have to offer. Bon Appetit!</p>
+
+        <hr>
+
+        <h2>Start a New Recipe</h2>
+        {% if error_message %}
+            <p class="error">{{ error_message }}</p>
+        {% endif %}
+        <form method="POST" action="/">
+            <label for="budget">What's your budget? (e.g., $5, $10, $15):</label>
+            <input type="text" id="budget" name="budget" required>
+
+            <label for="mood">What mood are you in? (e.g., comforting, healthy, adventurous):</label>
+            <input type="text" id="mood" name="mood" required>
+
+            <label for="tools">What kitchen tools do you have? (comma-separated, e.g., pan, oven, microwave):</label>
+            <input type="text" id="tools" name="tools" required>
+
+            <label for="time">How much time do you want to spend cooking? (e.g., 30 minutes, 1 hour):</label>
+            <input type="text" id="time" name="time" required>
+
+            <label for="dietary_restrictions">Any dietary restrictions? (comma-separated, e.g., vegetarian, gluten-free):</label>
+            <input type="text" id="dietary_restrictions" name="dietary_restrictions">
+
+            <button type="submit">Get My Meal Idea</button>
+        </form>
+
+        <hr>
+
+        <h2><a href="{{ url_for('view_history') }}">View Recipe History</a></h2>
+    </div>
+</body>
+</html>
