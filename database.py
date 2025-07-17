@@ -1,28 +1,44 @@
 import sqlite3
 import json
+from contextlib import contextmanager
 from datetime import datetime
 
 class Database:
     def __init__(self, db_name="crave.db"):
+        """
+        Initializes the Database class and ensures the necessary table exists.
+        Connection objects are no longer stored as instance variables.
+        """
         self.db_name = db_name
-        self.conn = None
-        self.cursor = None
-        self._connect()
         self._create_table()
 
-    def _connect(self):
-        """Establishes a connection to the SQLite database."""
+    @contextmanager
+    def _get_connection(self):
+        """
+        A context manager to handle database connections.
+        This will create a new connection for each operation, ensuring thread safety.
+        It automatically handles commits, rollbacks, and closing the connection.
+        """
+        conn = sqlite3.connect(self.db_name)
         try:
-            self.conn = sqlite3.connect(self.db_name)
-            self.cursor = self.conn.cursor()
+            yield conn
+            conn.commit()
         except sqlite3.Error as e:
-            print(f"Error connecting to database: {e}")
+            print(f"Database error: {e}")
+            if conn:
+                conn.rollback()
+            # We can choose to re-raise the exception if the calling code needs to know about it
+            # raise e 
+        finally:
+            if conn:
+                conn.close()
 
     def _create_table(self):
         """Creates the 'meals' table if it doesn't exist."""
-        if self.conn:
-            try:
-                self.cursor.execute("""
+        try:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
                     CREATE TABLE IF NOT EXISTS meals (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         meal_idea TEXT NOT NULL,
@@ -31,51 +47,44 @@ class Database:
                         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
                     )
                 """)
-                self.conn.commit()
-            except sqlite3.Error as e:
-                print(f"Error creating table: {e}")
-        else:
-            print("Database connection not established. Cannot create table.")
+        except sqlite3.Error as e:
+            # The context manager will also print the error, but this adds specific context.
+            print(f"Error creating table: {e}")
 
     def save_meal(self, meal_idea, user_inputs, recipe_data):
         """Saves a meal and its associated data to the database."""
-        if self.conn:
-            try:
+        try:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
                 user_inputs_json = json.dumps(user_inputs)
                 recipe_data_json = json.dumps(recipe_data)
-                self.cursor.execute(
+                cursor.execute(
                     "INSERT INTO meals (meal_idea, user_inputs, recipe_data) VALUES (?, ?, ?)",
                     (meal_idea, user_inputs_json, recipe_data_json)
                 )
-                self.conn.commit()
-            except sqlite3.Error as e:
-                print(f"Error saving meal: {e}")
-        else:
-            print("Database connection not established. Cannot save meal.")
+        except sqlite3.Error as e:
+            print(f"Error saving meal: {e}")
 
     def meal_history(self):
         """Retrieves all past meals from the database."""
-        if self.conn:
-            try:
-                self.cursor.execute("SELECT meal_idea, user_inputs, recipe_data, timestamp FROM meals ORDER BY timestamp DESC")
-                rows = self.cursor.fetchall()
+        try:
+            with self._get_connection() as conn:
+                # Use a row_factory for easier access to columns by name
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                cursor.execute("SELECT meal_idea, user_inputs, recipe_data, timestamp FROM meals ORDER BY timestamp DESC")
+                rows = cursor.fetchall()
+                
+                # Process rows into a list of dictionaries
                 history = []
                 for row in rows:
                     history.append({
-                        "meal_idea": row[0],
-                        "user_inputs": json.loads(row[1]),
-                        "recipe_data": json.loads(row[2]),
-                        "timestamp": row[3]
+                        "meal_idea": row["meal_idea"],
+                        "user_inputs": json.loads(row["user_inputs"]),
+                        "recipe_data": json.loads(row["recipe_data"]),
+                        "timestamp": row["timestamp"]
                     })
                 return history
-            except sqlite3.Error as e:
-                print(f"Error retrieving meal history: {e}")
-                return []
-        else:
-            print("Database connection not established. Cannot retrieve history.")
+        except sqlite3.Error as e:
+            print(f"Error retrieving meal history: {e}")
             return []
-
-    def close(self):
-        """Closes the database connection."""
-        if self.conn:
-            self.conn.close()

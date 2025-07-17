@@ -5,42 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crave - Personalized Meals for College Students</title>
     <link rel="icon" href="logo.png">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Seaweed+Script&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
     <nav>
-        <ul>
+        <ul class = "nvbar">
             
             <li>About</li>
             <li>Create a New recipe</li>
             <li>Recipe History</li>
         </ul>
     </nav>
-    <div>
+    <br>
+    <br>
+    <div class = "land">
         <div>
-            <h1>Crave</h1>
-            <ul>
+            <h1 class = "tit">Crave</h1>
+            <ul class = "pl">
                 <li>Real food. </li>
                 <li>Real broke. </li>
                  <li>Real quick. </li>
             </ul>
             <p>Crave helps you cook delicious, affordable meals based on your budget, mood, tools, time, and diet. Powered by 
                 GenAI and the Tasty API—if we can’t find it, we’ll create it. Bon appétit!</p>
-                <button>Start a New Recipe</button>
-                <button>View Recipe History</button>
+                <button id ="strec">Start a New Recipe</button>
+                <button id ="vrhis">View Recipe History</button>
         </div>
         <div>
             <img src="{{ url_for('static', filename='images/plate.png') }}" alt="picture of meal on plate">
         </div>
     </div>
+    <h2>About</h2>
+    <p>We ask for your budget, time, mood, dietary needs, and kitchen tools. Then, using GenAI and the Tasty API, we recommend meals that match your vibe and constraints. If nothing fits, 
+        our AI generates a custom recipe just for you. It’s cooking made simple, practical, and tailored to real student life. No fluff—just good food that works for your situation.</p>
     <div class="container">
-        <h1>Welcome to Crave! ✨</h1>
-        <p>Let's cook something delicious and affordable.</p>
-        <p>You will be asked for your budget, mood, kitchen tools, time, and dietary restrictions.</p>
-        <p>From there, we will generate a meal suited to your tastes using GenAI and the Tasty API.</p>
-        <p>If a suggested meal isn't found on Tasty, our GenAI will generate a recipe for you. We hope you enjoy what we have to offer. Bon Appetit!</p>
-
-        <hr>
 
         <h2>Start a New Recipe</h2>
         {% if error_message %}
@@ -62,12 +67,17 @@
             <label for="dietary_restrictions">Any dietary restrictions? (comma-separated, e.g., vegetarian, gluten-free):</label>
             <input type="text" id="dietary_restrictions" name="dietary_restrictions">
 
-            <button type="submit">Get My Meal Idea</button>
+            <button type="submit" id="submit-recipe-button">Get My Meal Idea</button>
         </form>
 
         <hr>
 
         <h2><a href="{{ url_for('view_history') }}">View Recipe History</a></h2>
     </div>
+    <script>
+        document.getElementById('submit-recipe-button').addEventListener('click', function() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        });
+    </script>
 </body>
 </html>

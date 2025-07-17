@@ -1,9 +1,9 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family:'Lato', sans-serif;
     line-height: 1.6;
     margin: 0;
     padding: 20px;
-    background-color: #f4f4f4;
+    background-color:white;
     color: #333;
 }
 
@@ -13,9 +13,64 @@ body {
     background: #fff;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   
 }
-
+.land{
+    display: flex;
+    flex-direction: row;
+}
+.pl li{
+   color: #5E9B53;
+   list-style: none;
+   font-size: 30px;
+   font-weight: 400;
+}
+.nvbar{
+    color: #D95B5C;
+     list-style: none;
+     display: flex;
+     flex-direction: row;
+     justify-content: right;
+}
+.nvbar li{
+    padding: 3px;
+    padding-right: 35px;
+}
+#strec{
+background-color: #D95B5C;
+color: white;
+border-color:#D95B5C;
+width: 238px;
+height: 78px;
+border-radius: 38px;
+box-shadow: none;
+border-style: none;
+font-family:'Lato', sans-serif;
+font-size: 16px;
+}
+#vrhis{
+background-color:#5E9B53;
+color: white;
+border-color: #D95B5C;
+width: 238px;
+height: 78px;
+border-radius: 38px;
+box-shadow: none;
+border-style: none;
+font-family:'Lato', sans-serif;
+font-size: 16px;
+}
+p{
+    color: #D95B5C;
+}
+.tit{
+    color: #D95B5C;
+    text-align: left;
+    font-family: 'Seaweed Script', cursive;
+    font-size: 160px;
+    padding-top: 2px;
+    margin: 0;
+}
 h1, h2, h3 {
     color: #333;
     text-align: center;
@@ -142,4 +197,33 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+/* Existing styles */
+
+/* --- Loading Spinner Styles --- */
+.loading-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    z-index: 9999; /* Ensure it's on top of everything */
+    justify-content: center; /* Center the spinner horizontally */
+    align-items: center; /* Center the spinner vertically */
+}
+
+.spinner {
+    border: 8px solid rgba(255, 255, 255, 0.3); /* Light grey border */
+    border-top: 8px solid #f3f3f3; /* White border on top */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite; /* Spin animation */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
     <div class="container">
         <h1>Your Personalized Recipe</h1>
         {% if error_message %}
@@ -40,7 +44,7 @@
             <form method="POST" action="{{ url_for('variation') }}">
                 <label for="variation_prompt">Try a variation of "{{ meal_idea }}" (e.g., "spicier", "vegetarian version"):</label>
                 <input type="text" id="variation_prompt" name="variation_prompt" required>
-                <button type="submit">Get Variation</button>
+                <button type="submit" id="get-variation-button">Get Variation</button>
             </form>
 
             <p><a href="{{ url_for('index') }}">Start a New Recipe</a></p>
@@ -50,5 +54,10 @@
             <p><a href="{{ url_for('index') }}">Go Back Home</a></p>
         {% endif %}
     </div>
+    <script>
+        document.getElementById('get-variation-button').addEventListener('click', function() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        });
+    </script>
 </body>
 </html>
