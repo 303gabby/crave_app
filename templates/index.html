@@ -4,9 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crave - Personalized Meals for College Students</title>
+    <link rel="icon" href="logo.png">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <nav>
+        <ul>
+            
+            <li>About</li>
+            <li>Create a New recipe</li>
+            <li>Recipe History</li>
+        </ul>
+    </nav>
+    <div>
+        <div>
+            <h1>Crave</h1>
+            <ul>
+                <li>Real food. </li>
+                <li>Real broke. </li>
+                 <li>Real quick. </li>
+            </ul>
+            <p>Crave helps you cook delicious, affordable meals based on your budget, mood, tools, time, and diet. Powered by 
+                GenAI and the Tasty API—if we can’t find it, we’ll create it. Bon appétit!</p>
+                <button>Start a New Recipe</button>
+                <button>View Recipe History</button>
+        </div>
+        <div>
+            <img src="{{ url_for('static', filename='images/plate.png') }}" alt="picture of meal on plate">
+        </div>
+    </div>
     <div class="container">
         <h1>Welcome to Crave! ✨</h1>
         <p>Let's cook something delicious and affordable.</p>

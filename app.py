@@ -8,7 +8,7 @@ import os
 app = Flask(__name__)
 app.secret_key = os.urandom(24) 
 
-# Initialize your classes
+
 db = Database()
 meal_suggestion_service = CreateMeal()
 recipe_creation_service = CreateRecipe()
