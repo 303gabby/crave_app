@@ -6,6 +6,9 @@
     <title>Your Personalized Recipe - Crave</title>
     <link rel="icon" href="/assets/logo.png">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Seaweed+Script&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <div id="loading-overlay" class="loading-overlay">
@@ -33,7 +36,7 @@
                 {% endif %}
                 <p><strong>Servings:</strong> {{ recipe.servings }}</p>
                 <p><strong>Ready in:</strong> {{ recipe.readyInMinutes }} minutes</p>
-                <p><strong>Source:</strong> <a href="{{ recipe.sourceUrl }}" target="_blank">{{ recipe.sourceUrl }}</a></p>
+                <p><strong>Source:</strong> "{{ recipe.sourceUrl }}" </p>
 
                 <h3>Ingredients:</h3>
                 {{ recipe.ingredients_html | safe }}
@@ -54,8 +57,10 @@
                 <button type="submit" id="get-variation-button">Get Variation</button>
             </form>
 
-            <p><a href="{{ url_for('index') }}">Start a New Recipe</a></p>
-            <p><a href="{{ url_for('view_history') }}">View Recipe History</a></p>
+           
+            <button class="dee"><a href="{{ url_for('view_history') }}">View Recipe History</a></button>
+            <button class="dee"><a href="{{ url_for('create_recipe_page') }}">Start a New Recipe</a></button>
+            
         {% else %}
             <p>No recipe found. Please go back and try again.</p>
             <p><a href="{{ url_for('index') }}">Go Back Home</a></p>

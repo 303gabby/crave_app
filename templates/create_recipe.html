@@ -29,15 +29,15 @@
     <div class = "rec">
      <div class = "instr">
       <h1 class = "tit">Crave</h1>
-      <h2>Quick Reminder on How to Use The App</h2>
-      <ol>
+      <h2 class = "qkrem">Quick Reminder on How to Use The App</h2>
+      <ol class = "inst">
         <li> Fill in your preferences.</li>
         <li>Sit back and wait for your recommendation.</li>
         <li>If you like it, enjoy cooking!</li>
         <li>Want a variation? We have those options!</li>
       
       </ol>
-      <button><a href="{{ url_for('view_history') }}">View Recipe History</a></button>
+      <button class="vwhis"><a href="{{ url_for('view_history') }}">View Recipe History</a></button>
       </div>
     <div class="container">
  
@@ -52,7 +52,7 @@
             <label for="budget">What's your budget? (ex: $5, $10, $15):</label>
             <input type="text" id="budget" name="budget" required>
 
-            <label for="mood">What mood are you in? (ex: comforting, healthy, adventurous):</label>
+            <label for="mood">What type of food are you in the mood for? (ex: comforting, healthy, Italian):</label>
             <input type="text" id="mood" name="mood" required>
 
             <label for="tools">What kitchen tools do you have? (comma-separated, ex: pan, oven, microwave):</label>

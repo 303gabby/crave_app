@@ -5,8 +5,8 @@ from meal_suggestion import CreateMeal
 
 class CreateRecipe:
     def __init__(self):
-
-    
+        self.api_key = ""
+        self.api_host = "tasty.p.rapidapi.com"
 
         self.base_url = f"https://{self.api_host}"
 
@@ -17,10 +17,26 @@ class CreateRecipe:
 
         self.meal_suggestion = CreateMeal()
 
+   
+    def _convert_sets_to_lists(self, obj):
+        """
+        Recursively converts set objects within a dictionary, list, or set
+        to list objects, making them JSON serializable.
+        """
+        if isinstance(obj, set):
+            return list(obj)
+        elif isinstance(obj, dict):
+            return {k: self._convert_sets_to_lists(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._convert_sets_to_lists(elem) for elem in obj]
+        else:
+            return obj
+
     def req_recipe_details(self, meal_idea, type_of_meal, budget, tools, time, dietary_restrictions):
         """
         Fetches recipe details from Tasty API based on the meal idea and user preferences.
         If Tasty API fails or returns no results, it falls back to GenAI.
+        Ensures the returned recipe data is JSON serializable.
         """
         search_url = f"https://{self.api_host}/recipes/list"
         search_params = {
@@ -58,8 +74,9 @@ class CreateRecipe:
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON response from Tasty API: {e}. Raw response: {response.text if 'response' in locals() else 'No response object.'}")
 
+        final_recipe_data = None
         if tasty_recipe:
-            return tasty_recipe
+            final_recipe_data = tasty_recipe
         else:
             print("Will Generate a recipe based on your needs!")
             genai_recipe_text = self.meal_suggestion.create_whole_recipe(
@@ -68,11 +85,17 @@ class CreateRecipe:
 
             if genai_recipe_text:
                 print("AI-generated recipe received. Parsing...")
-                ai_recipe = self._loop_genai_recipe(genai_recipe_text)
-                return ai_recipe
+                final_recipe_data = self._loop_genai_recipe(genai_recipe_text)
             else:
                 print("Failed to generate a full recipe from AI.")
-                return None
+                final_recipe_data = None
+
+   
+        # Recursively convert any sets to lists before returning
+        if final_recipe_data:
+            return self._convert_sets_to_lists(final_recipe_data)
+        else:
+            return None
 
     def _req_recipe_by_id(self, recipe_id):
         """
@@ -147,10 +170,10 @@ class CreateRecipe:
         """
         Parses the markdown-formatted text response from GenAI into a dictionary
         consistent with the expected recipe structure for Crave.
+        Ensures the returned dictionary is JSON serializable.
         """
         looped_ai_recipe = {
             'title': 'meal_idea',
-            'image': 'AI Generated Image for Recipe',
             'servings': 'N/A',
             'readyInMinutes': 'N/A',
             'sourceUrl': 'AI Generated',
@@ -166,27 +189,49 @@ class CreateRecipe:
             if not line:
                 continue
 
-            # Identify sections based on common headings
-            if line.startswith("* Recipe Title:"):
+            # Check for recipe title
+            if line.startswith("~ Recipe Title:"):
                 try:
-                    looped_ai_recipe['title'] = line.replace("* Recipe Title:", "").replace("*", "").strip()
+                    looped_ai_recipe['title'] = line.replace("~ Recipe Title:", "").replace("~", "").strip()
                 except IndexError:
-                    pass
+                    pass # Handle cases where title might not be perfectly formatted
                 current_section = 'title'
+            # Check for cook time
             elif line.startswith("Cook Time:"):
                 time_str = line.replace("Cook Time:", "").strip()
                 if "minutes" in time_str.lower():
                     try:
                         looped_ai_recipe['readyInMinutes'] = int(time_str.lower().replace("minutes", "").strip())
                     except ValueError:
-                        looped_ai_recipe['readyInMinutes'] = time_str
+                        looped_ai_recipe['readyInMinutes'] = time_str # Keep as string if not a clean int
                 else:
                     looped_ai_recipe['readyInMinutes'] = time_str
                 current_section = 'cook_time'
+            # Check for servings
             elif line.startswith("Servings:"):
                 looped_ai_recipe['servings'] = line.replace("Servings:", "").strip()
                 current_section = 'servings'
-            elif line.startswith("Nutritonal Facts:"):
+            # Check for ingredients section
+            elif line.startswith("Ingredients:"):
+                current_section = 'ingredients'
+            # Check for instructions section
+            elif line.startswith("~ Instructions:~"):
+                current_section = 'instructions'
+            # Handle numbered instruction steps (e.g., "1. First step")
+            elif current_section == 'instructions' and line.startswith(('1.', '2.', '3.', '4.', '5.', '6.', '7.', '8.', '9.', '10.')):
+                looped_ai_recipe['instructions'] += line + "\n"
+            # Handle ingredient list items
+            elif current_section == 'ingredients' and line.startswith('- '):
+                looped_ai_recipe['extendedIngredients'].append({
+                    'originalName': line[2:].strip(),
+                    'amount': '',
+                    'unit': ''
+                })
+            # Handle any other lines within the current section (e.g., multi-line instructions)
+            elif current_section == 'instructions':
+                looped_ai_recipe['instructions'] += line + "\n"
+          
+            elif line.startswith("Nutritonal Facts:"): 
                 nutrition_summary = line.replace("Nutritonal Facts:", "").strip()
                 if nutrition_summary and nutrition_summary != '[Z]':
                     looped_ai_recipe['nutrition']['nutrients'].append({
@@ -195,25 +240,9 @@ class CreateRecipe:
                         'unit': ''
                     })
                 current_section = 'nutrition'
-            elif line.startswith("Ingredients:"):
-                current_section = 'ingredients'
-            elif line.startswith("* Instructions:*"):
-                current_section = 'instructions'
-            elif line.startswith("1."):
-                if current_section != 'instructions':
-                    looped_ai_recipe['instructions'] += line + "\n"
-                    current_section = 'instructions'
-                else:
-                    looped_ai_recipe['instructions'] += line + "\n"
-            else:
-                if current_section == 'ingredients' and line.startswith('- '):
-                    looped_ai_recipe['extendedIngredients'].append({
-                        'originalName': line[2:].strip(),
-                        'amount': '',
-                        'unit': ''
-                    })
-                elif current_section == 'instructions':
-                    looped_ai_recipe['instructions'] += line + "\n"
 
         looped_ai_recipe['instructions'] = looped_ai_recipe['instructions'].strip()
-        return looped_ai_recipe
+        
+       
+        return self._convert_sets_to_lists(looped_ai_recipe)
+    

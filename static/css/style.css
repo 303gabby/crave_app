@@ -13,8 +13,23 @@ body {
     background: #5E9B53;
     padding: 30px;
     border-radius: 8px;
+    font-family:'Lato', sans-serif;
    
 }
+nav{
+    background-color: white;
+    position: sticky;
+}
+.container ul, h3{
+    color: #5E9B53;
+}
+.container h1{
+    color: white;
+}
+.container ol{
+    color: #5E9B53;
+}
+
 .land{
     display: flex;
     flex-direction: row;
@@ -23,10 +38,36 @@ body {
 }
 ol{
     color: #5E9B53;
+    font-size: 18px;
 }
-
+.vwhis{
+    background-color: #D95B5C;
+    color: white;
+    width: 238px;
+    height: 78px;
+    border-radius: 38px;
+    border-color: #D95B5C;
+    border-style: solid;
+    margin: 10px;
+}
+.vwhis a{
+    color: white;
+    text-decoration: none;
+}
+.vwhis a:hover{
+    
+    text-decoration: none;
+}
+.vwhis:hover{
+    background-color: #a84343;
+    border-color: #D95B5C;
+    
+}
 .words{
     width: 50%
+}
+.qkrem{
+    color: #D95B5C;
 }
 .pl li{
    color: #5E9B53;
@@ -43,11 +84,16 @@ ol{
     padding-bottom: 15px;
 }
 .nvbar{
+    background-color: white;
     color: #D95B5C;
+    
      list-style: none;
      display: flex;
      flex-direction: row;
      justify-content: right;
+}
+.nvbar a{
+    color: #D95B5C;
 }
 .nvbar li{
     padding: 3px;
@@ -72,6 +118,10 @@ margin-right: 30px;
 #strec a:hover{
     text-decoration: none;
 }
+#strec:hover{
+    background-color:#c15252;
+}
+
 #vrhis{
 background-color:#5E9B53;
 color: white;
@@ -85,17 +135,22 @@ font-family:'Lato', sans-serif;
 font-size: 16px;
 }
 #vrhis:hover{
-    background-color: white;
-    border-color: #5E9B53;
-    color: #5E9B53;
+   background-color: #5cb85c;
+   color: white;
     border-width: 4px;
 }
-#strec:hover{
-    background-color: white;
-    border-color: #D95B5C;
-}
 
-#vrhis a:hover{
+#fortit{
+    color: white;
+}
+.cred{
+    font-family:'Lato', sans-serif;
+    color: #D95B5C;
+    text-align: left;
+    padding-left: 70px;
+}
+#vrhis a{
+    color: white;
     text-decoration: none;
 }
 p{
@@ -182,6 +237,8 @@ form button:hover {
     border-radius: 8px;
     padding: 25px;
     margin-top: 20px;
+    font-family:'Lato', sans-serif;
+    color: #35582f;
 }
 
 .recipe-image {
@@ -193,7 +250,7 @@ form button:hover {
 }
 
 .recipe-card h2, .recipe-card h3 {
-    color: #444;
+   color: #3a802e;
     text-align: left;
     margin-bottom: 10px;
 }
@@ -245,7 +302,7 @@ form button:hover {
 }
 
 a {
-    color: #D95B5C;
+   
     text-decoration: none;
     font-family:'Lato', sans-serif;
 }
@@ -283,4 +340,48 @@ a:hover {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+.piss{
+    padding: 30px;
+    padding-left: 70px;
+    padding-right: 70px;
+    color: #5E9B53;
+}
+.tit2{
+    color: #D95B5C;
+    text-align: center;
+    font-family: 'Seaweed Script', cursive;
+    font-size: 160px;
+    padding-top: 2px;
+    padding-left: 10px;
+    margin: 0;
+   
+}
+.dee {
+    display: block;
+    width: 100%;
+    padding: 12px;
+   margin: 5px;
+    background-color: #326132;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family:'Lato', sans-serif;
+}
+
+.dee a{
+    color: white;
+}
+.dee a:hover{
+    color: white;
+    text-decoration: none;
+}
+.dee:hover {
+    background-color: #4cae4c;
+    font-family:'Lato', sans-serif;
+    color: white;
+    text-decoration: none;
 }

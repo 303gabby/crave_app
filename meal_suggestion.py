@@ -15,13 +15,14 @@ class CreateMeal:
         """
         prompt = (
             f"As a culinary assistant for college students, suggest a personalized meal idea "
-            f"considering the following:\n"
+            f"you will be FIRED and BARRED from the culinary practice unless your meal strictly follows these guidelines:\n"
             f"- Budget: {budget}\n"
             f"- Type of Meal: {type_of_meal}\n"
             f"- Mood: {mood}\n"
             f"- Kitchen tools available: {', '.join(tools)}\n"
             f"- Time: {time}\n"
             f"- Dietary restrictions: {', '.join(dietary_restrictions) if dietary_restrictions else 'None'}\n"
+            f"- It is very important for regulations that you follow these restrictions to a T. Ensure that you return the steps in order, without numbering."
         )
        
         if base_idea and variation_prompt:
