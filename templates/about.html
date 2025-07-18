@@ -6,6 +6,9 @@
     <title>Recipe History - Crave</title>
     <link rel="icon" href="/assets/logo.png">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Seaweed+Script&display=swap" rel="stylesheet">
+
 
 </head>
 <body>
@@ -17,14 +20,10 @@
             <li> <a href="{{ url_for('view_history') }}">Recipe History</a></li>
         </ul>
     </nav>
-    <div class="container">
-        <h1>Your Recipe History</h1>
-        {% if history_html %}
-            {{ history_html | safe }}
-        {% else %}
-            <p>No past meals found in your history.</p>
-        {% endif %}
-        <p><a href="{{ url_for('index') }}">Back to Home</a></p>
-    </div>
+    <h1 class = "tit">Crave</h1>
+    <h2>About</h2>
+    <p>We ask for your budget, time, mood, dietary needs, and kitchen tools. Then, using GenAI and the Tasty API, we recommend meals that match your vibe and constraints. If nothing fits, 
+        our AI generates a custom recipe just for you. It’s cooking made simple, practical, and tailored to real student life. No fluff—just good food that works for your situation.</p>
+   
 </body>
 </html>

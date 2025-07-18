@@ -8,9 +8,9 @@ body {
 }
 
 .container {
-    max-width: 800px;
-    margin: 20px auto;
-    background: #fff;
+    max-width: 600px;
+    margin: 10px auto;
+    background: #5E9B53;
     padding: 30px;
     border-radius: 8px;
    
@@ -18,12 +18,29 @@ body {
 .land{
     display: flex;
     flex-direction: row;
+    padding-left: 75px;
+   
+}
+ol{
+    color: #5E9B53;
+}
+
+.words{
+    width: 50%
 }
 .pl li{
    color: #5E9B53;
    list-style: none;
    font-size: 30px;
    font-weight: 400;
+}
+.pl{
+    padding-left: 10px;
+}
+#blurb{
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 15px;
 }
 .nvbar{
     color: #D95B5C;
@@ -47,6 +64,13 @@ box-shadow: none;
 border-style: none;
 font-family:'Lato', sans-serif;
 font-size: 16px;
+margin-right: 30px;
+}
+#strec a{
+    color: white;
+}
+#strec a:hover{
+    text-decoration: none;
 }
 #vrhis{
 background-color:#5E9B53;
@@ -60,6 +84,20 @@ border-style: none;
 font-family:'Lato', sans-serif;
 font-size: 16px;
 }
+#vrhis:hover{
+    background-color: white;
+    border-color: #5E9B53;
+    color: #5E9B53;
+    border-width: 4px;
+}
+#strec:hover{
+    background-color: white;
+    border-color: #D95B5C;
+}
+
+#vrhis a:hover{
+    text-decoration: none;
+}
 p{
     color: #D95B5C;
 }
@@ -72,10 +110,10 @@ p{
     margin: 0;
 }
 h1, h2, h3 {
-    color: #333;
     text-align: center;
     margin-bottom: 20px;
 }
+
 
 hr {
     border: 0;
@@ -83,16 +121,23 @@ hr {
     background: #eee;
     margin: 30px 0;
 }
-
+#pla{
+    width: 566px;
+    height: auto;
+}
 
 form {
     margin-top: 20px;
+    font-family:'Lato', sans-serif;
+    
 }
 
 form label {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
+    font-family:'Lato', sans-serif;
+    color: white;
 }
 
 form input[type="text"],
@@ -103,25 +148,34 @@ form textarea {
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
+    font-family:'Lato', sans-serif;
 }
 
 form button {
     display: block;
     width: 100%;
     padding: 12px;
-    background-color: #5cb85c;
+    background-color: #326132;
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 18px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-family:'Lato', sans-serif;
 }
 
 form button:hover {
     background-color: #4cae4c;
+    font-family:'Lato', sans-serif;
 }
-
+.rec{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+    padding-left: 100px;
+}
 .recipe-card {
     background-color: #f9f9f9;
     border: 1px solid #e1e1e1;
@@ -191,36 +245,39 @@ form button:hover {
 }
 
 a {
-    color: #007bff;
+    color: #D95B5C;
     text-decoration: none;
+    font-family:'Lato', sans-serif;
 }
 
 a:hover {
+    font-family:'Lato', sans-serif;
     text-decoration: underline;
+    text-underline-offset: 5px;
 }
-/* Existing styles */
+
 
 /* --- Loading Spinner Styles --- */
 .loading-overlay {
-    display: none; /* Hidden by default */
+    display: none; 
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
-    z-index: 9999; /* Ensure it's on top of everything */
-    justify-content: center; /* Center the spinner horizontally */
-    align-items: center; /* Center the spinner vertically */
+    background-color: rgba(0, 0, 0, 0.7); 
+    z-index: 9999;
+    justify-content: center; 
+    align-items: center; 
 }
 
 .spinner {
-    border: 8px solid rgba(255, 255, 255, 0.3); /* Light grey border */
-    border-top: 8px solid #f3f3f3; /* White border on top */
+    border: 8px solid rgba(255, 255, 255, 0.3); 
+    border-top: 8px solid #f3f3f3; 
     border-radius: 50%;
     width: 60px;
     height: 60px;
-    animation: spin 1s linear infinite; /* Spin animation */
+    animation: spin 1s linear infinite; 
 }
 
 @keyframes spin {

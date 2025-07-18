@@ -27,8 +27,7 @@ class Database:
             print(f"Database error: {e}")
             if conn:
                 conn.rollback()
-            # We can choose to re-raise the exception if the calling code needs to know about it
-            # raise e 
+          
         finally:
             if conn:
                 conn.close()
@@ -48,7 +47,7 @@ class Database:
                     )
                 """)
         except sqlite3.Error as e:
-            # The context manager will also print the error, but this adds specific context.
+           
             print(f"Error creating table: {e}")
 
     def save_meal(self, meal_idea, user_inputs, recipe_data):
@@ -69,13 +68,13 @@ class Database:
         """Retrieves all past meals from the database."""
         try:
             with self._get_connection() as conn:
-                # Use a row_factory for easier access to columns by name
+               
                 conn.row_factory = sqlite3.Row
                 cursor = conn.cursor()
                 cursor.execute("SELECT meal_idea, user_inputs, recipe_data, timestamp FROM meals ORDER BY timestamp DESC")
                 rows = cursor.fetchall()
                 
-                # Process rows into a list of dictionaries
+              
                 history = []
                 for row in rows:
                     history.append({

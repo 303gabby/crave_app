@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crave - Create Recipe</title>
+    <link rel="icon" href="logo.png">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Seaweed+Script&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+     <nav>
+        <ul class = "nvbar">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('create_recipe_page') }}">Create a New Recipe</a></li>
+            <li> <a href="{{ url_for('view_history') }}">Recipe History</a></li>
+        </ul>
+    </nav>
+    <br>
+    <br>
+   
+    <div class = "rec">
+     <div class = "instr">
+      <h1 class = "tit">Crave</h1>
+      <h2>Quick Reminder on How to Use The App</h2>
+      <ol>
+        <li> Fill in your preferences.</li>
+        <li>Sit back and wait for your recommendation.</li>
+        <li>If you like it, enjoy cooking!</li>
+        <li>Want a variation? We have those options!</li>
+      
+      </ol>
+      <button><a href="{{ url_for('view_history') }}">View Recipe History</a></button>
+      </div>
+    <div class="container">
+ 
+        <h2 id = "fortit">Let's Create Something Delicious!</h2>
+        {% if error_message %}
+            <p class="error">{{ error_message }}</p>
+        {% endif %}
+        <form method="POST" action="/create_recipe_page">
+            <label for="type_of_meal">What type of meal is this? (breakfast, lunch, dinner, or a snack?):</label>
+            <input type="text" id="type_of_meal" name="type_of_meal" required>
+
+            <label for="budget">What's your budget? (ex: $5, $10, $15):</label>
+            <input type="text" id="budget" name="budget" required>
+
+            <label for="mood">What mood are you in? (ex: comforting, healthy, adventurous):</label>
+            <input type="text" id="mood" name="mood" required>
+
+            <label for="tools">What kitchen tools do you have? (comma-separated, ex: pan, oven, microwave):</label>
+            <input type="text" id="tools" name="tools" required>
+
+            <label for="time">How much time do you want to spend cooking? (ex: 30 minutes, 1 hour):</label>
+            <input type="text" id="time" name="time" required>
+
+            <label for="dietary_restrictions">Any dietary restrictions? (comma-separated, ex: vegetarian, gluten-free):</label>
+            <input type="text" id="dietary_restrictions" name="dietary_restrictions">
+
+            <button type="submit" id="submit-recipe-button">Get My Meal Idea</button>
+        </form>
+
+        <hr>
+
+        
+    </div>
+    </div>
+    <script>
+        document.getElementById('submit-recipe-button').addEventListener('click', function() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>

@@ -11,7 +11,14 @@
     <div id="loading-overlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
-
+     <nav>
+        <ul class = "nvbar">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('create_recipe_page') }}">Create a New Recipe</a></li>
+            <li> <a href="{{ url_for('view_history') }}">Recipe History</a></li>
+        </ul>
+    </nav>
     <div class="container">
         <h1>Your Personalized Recipe</h1>
         {% if error_message %}

@@ -17,7 +17,7 @@ class CreateRecipe:
 
         self.meal_suggestion = CreateMeal()
 
-    def req_recipe_details(self, meal_idea, budget, tools, time, dietary_restrictions):
+    def req_recipe_details(self, meal_idea, type_of_meal, budget, tools, time, dietary_restrictions):
         """
         Fetches recipe details from Tasty API based on the meal idea and user preferences.
         If Tasty API fails or returns no results, it falls back to GenAI.
@@ -63,7 +63,7 @@ class CreateRecipe:
         else:
             print("Will Generate a recipe based on your needs!")
             genai_recipe_text = self.meal_suggestion.create_whole_recipe(
-                meal_idea, budget, tools, time, dietary_restrictions
+                meal_idea, type_of_meal, budget, tools, time, dietary_restrictions
             )
 
             if genai_recipe_text:
@@ -149,7 +149,8 @@ class CreateRecipe:
         consistent with the expected recipe structure for Crave.
         """
         looped_ai_recipe = {
-            'title': 'AI Generated Recipe',
+            'title': 'meal_idea',
+            'image': 'AI Generated Image for Recipe',
             'servings': 'N/A',
             'readyInMinutes': 'N/A',
             'sourceUrl': 'AI Generated',
