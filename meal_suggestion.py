@@ -3,7 +3,7 @@ import os
 
 class CreateMeal:
     def __init__(self):
-        genai.configure(api_key="AIzaSyCf68-vH8X316AbZuJE78oGFcwhtxadVt0") # <<< IMPORTANT: Replace with your actual Gemini API Key
+      
         self.model = genai.GenerativeModel('gemini-1.5-flash')
 
     def create_meal(self, budget, mood, tools, time, dietary_restrictions, base_idea=None, variation_prompt=None):
