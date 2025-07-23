@@ -89,8 +89,6 @@ class CreateRecipe:
             else:
                 print("Failed to generate a full recipe from AI.")
                 final_recipe_data = None
-
-        # --- CRUCIAL FIX: Ensure the final recipe data is JSON serializable ---
         # Recursively convert any sets to lists before returning
         if final_recipe_data:
             return self._convert_sets_to_lists(final_recipe_data)
