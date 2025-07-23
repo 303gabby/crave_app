@@ -6,8 +6,7 @@ from meal_suggestion import CreateMeal
 class CreateRecipe:
     def __init__(self):
 
-        self.api_key = "e8f840284cmsha965fb8d670029dp1b8bafjsn58931215bd6f"
-        self.api_host = "tasty.p.rapidapi.com"
+    
 
         self.base_url = f"https://{self.api_host}"
 
