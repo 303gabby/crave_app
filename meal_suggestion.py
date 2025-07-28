@@ -1,15 +1,21 @@
 from openai import OpenAI
 import os
+from dotenv import load_dotenv 
 
 class CreateMeal:
     def __init__(self):
        
-        self.client = OpenAI(api_key="") 
+        load_dotenv()
+
+        openai_api_key = os.getenv("OPENAI_API_KEY")
+        if not openai_api_key:
+            raise ValueError("OPENAI_API_KEY not found in environment variables. Please set it in your .env file.")
+            
+        self.client = OpenAI(api_key=openai_api_key) 
         
-       
         self.model_name = 'gpt-4o-mini' 
 
-    def create_meal(self, budget, mood,type_of_meal, tools, time, dietary_restrictions, base_idea=None, variation_prompt=None):
+    def create_meal(self, budget, mood, type_of_meal, tools, time, dietary_restrictions, base_idea=None, variation_prompt=None):
         """
         Generates a tailored meal idea based on user inputs using OpenAI API.
         """

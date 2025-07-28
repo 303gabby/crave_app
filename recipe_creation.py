@@ -2,10 +2,17 @@ import requests
 import os
 import json
 from meal_suggestion import CreateMeal
+from dotenv import load_dotenv 
 
 class CreateRecipe:
     def __init__(self):
-        self.api_key = ""
+       
+        load_dotenv()
+
+        self.api_key = os.getenv("TASTY_API_KEY")
+        if not self.api_key:
+            raise ValueError("TASTY_API_KEY not found in environment variables. Please set it in your .env file.")
+
         self.api_host = "tasty.p.rapidapi.com"
 
         self.base_url = f"https://{self.api_host}"
@@ -225,7 +232,7 @@ class CreateRecipe:
                     'amount': '',
                     'unit': ''
                 })
-            # Handle any other lines within the current section (e.g., multi-line instructions)
+
             elif current_section == 'instructions':
                 looped_ai_recipe['instructions'] += line + "\n"
           
@@ -243,4 +250,3 @@ class CreateRecipe:
         
        
         return self._convert_sets_to_lists(looped_ai_recipe)
-    

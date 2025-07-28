@@ -1,0 +1,12 @@
+# Environment variables
+.env
+
+# Python virtual environment
+venv/
+*.pyc
+__pycache__/
+
+
+*.sqlite3 
+instance/
+.flaskenv 
