@@ -207,7 +207,7 @@ class CreateRecipe:
                     try:
                         looped_ai_recipe['readyInMinutes'] = int(time_str.lower().replace("minutes", "").strip())
                     except ValueError:
-                        looped_ai_recipe['readyInMinutes'] = time_str # Keep as string if not a clean int
+                        looped_ai_recipe['readyInMinutes'] = time_str 
                 else:
                     looped_ai_recipe['readyInMinutes'] = time_str
                 current_section = 'cook_time'

@@ -3,42 +3,37 @@ from flask import (
 )
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import os
-import requests # Needed for Google Places API
+import requests 
 from datetime import timedelta
-import openai # Assuming you use OpenAI for meal/recipe generation
-from dotenv import load_dotenv # To load environment variables
-import traceback # For debugging exceptions
+import openai 
+from dotenv import load_dotenv 
+import traceback 
 
-# Load environment variables from .env file
+
 load_dotenv()
 
 from meal_suggestion import CreateMeal
 from recipe_creation import CreateRecipe
 from database import Database
-from utils import format_recipe_for_display # format_history_for_display is no longer needed in app.py import
+from utils import format_recipe_for_display 
 
 app = Flask(__name__)
 
 # --- Secret Keys & JWT Configuration ---
-# Flask Session secret key (used by session, flash messages)
-# For production, load this from an environment variable for persistence across restarts:
+
 app.secret_key = os.getenv('FLASK_SECRET_KEY', os.urandom(24))
 
-# JWT Secret Key (used by Flask-JWT-Extended)
-# Crucial for production: Load this from an environment variable!
+
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'a-very-strong-default-jwt-secret-for-dev')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 
 jwt = JWTManager(app)
 
-# --- API Keys (ensure these are in your .env file) ---
-# Assuming these are used by your CreateMeal/CreateRecipe or directly in app.py now
 openai.api_key = os.getenv("OPENAI_API_KEY")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") # Define this globally if used across functions
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") 
 
-# Database and Service Initialization
 db = Database()
-db.create_tables() # Ensure tables are created on app startup
+db.create_tables() 
 meal_suggestion_service = CreateMeal()
 recipe_creation_service = CreateRecipe()
 
@@ -46,12 +41,12 @@ recipe_creation_service = CreateRecipe()
 
 @app.route('/')
 def index():
-    # Clear any temporary recipe data from session when returning home
+
     session.pop('current_meal_idea', None)
     session.pop('user_inputs', None)
     session.pop('current_recipe_data', None)
 
-    # Pass login status and username to the template
+  
     user_logged_in = 'user_id' in session
     username = session.get('username')
 
@@ -100,10 +95,10 @@ def login():
         if user and db.verify_password(user, password):
             access_token = create_access_token(identity=user['id'])
             session['access_token'] = access_token
-            session['user_id'] = user['id'] # Store user_id in session for DB operations
-            session['username'] = user['username'] # Store username for display
+            session['user_id'] = user['id'] 
+            session['username'] = user['username'] 
 
-            flash('Logged in successfully!', 'success') # Added flash message here
+            
             return redirect(url_for('index'))
         else:
             flash('Invalid username or password.', 'error')
@@ -129,7 +124,7 @@ def create_recipe_page():
         mood = request.form['mood']
         tools = [t.strip() for t in request.form['tools'].split(',') if t.strip()]
         time = request.form['time']
-        # Fixed the NameError: 'd' was not defined, changed to 't'
+
         dietary_restrictions = [t.strip() for t in request.form['dietary_restrictions'].split(',') if t.strip()]
 
         user_inputs = {
@@ -142,7 +137,6 @@ def create_recipe_page():
         }
         session['user_inputs'] = user_inputs
 
-        # Corrected order for create_meal arguments: budget, mood, type_of_meal, tools, time, dietary_restrictions
         meal_idea = meal_suggestion_service.create_meal(
             budget, mood, type_of_meal, tools, time, dietary_restrictions
         )
@@ -161,18 +155,16 @@ def create_recipe_page():
             flash("Couldn't find or generate a suitable recipe. Please try a different meal idea or adjust your preferences.", 'error')
             return render_template('create_recipe.html', user_inputs=user_inputs)
 
-        # Store the raw recipe_data in session for optional saving later
         session['current_recipe_data'] = recipe_data
 
-        # Render recipe_details.html with formatted data and show save options
         formatted_recipe = format_recipe_for_display(recipe_data)
         return render_template('recipe_details.html',
                                meal_idea=meal_idea,
                                recipe=formatted_recipe,
                                user_inputs=user_inputs,
-                               show_save_options=True) # Flag to show save/discard buttons
+                               show_save_options=True) 
 
-    # For GET request or if initial POST has an error, pre-fill form if inputs exist
+   
     return render_template('create_recipe.html', user_inputs=session.get('user_inputs', {}))
 
 
@@ -187,8 +179,8 @@ def variation():
         return redirect(url_for('create_recipe_page'))
 
     user_inputs = session['user_inputs']
-    base_idea = session['current_meal_idea'] # This is the base meal idea the variation was generated from
-    original_recipe_data = session['current_recipe_data'] # Keep original recipe data if variation fails
+    base_idea = session['current_meal_idea'] 
+    original_recipe_data = session['current_recipe_data'] 
     variation_prompt = request.form['variation_prompt']
 
     # Corrected order for create_meal arguments
@@ -200,16 +192,16 @@ def variation():
 
     if not new_meal_idea:
         flash("Could not generate a variation idea. Please try again.", 'error')
-        # Re-render recipe_details with original recipe if variation fails to generate a new idea
+
         formatted_recipe = format_recipe_for_display(original_recipe_data)
         return render_template('recipe_details.html',
-                               meal_idea=base_idea, # Display the original meal idea if variation idea failed
+                               meal_idea=base_idea, 
                                recipe=formatted_recipe,
                                user_inputs=user_inputs,
-                               show_save_options=True) # Still offer to save the original or try again
+                               show_save_options=True) 
 
 
-    session['current_meal_idea'] = new_meal_idea # Update current_meal_idea to the NEW variation idea
+    session['current_meal_idea'] = new_meal_idea
 
     variation_recipe_data = recipe_creation_service.req_recipe_details(
         new_meal_idea, user_inputs['type_of_meal'], user_inputs['budget'], user_inputs['tools'],
@@ -217,19 +209,19 @@ def variation():
     )
 
     if variation_recipe_data:
-        session['current_recipe_data'] = variation_recipe_data # Store new raw variation data
+        session['current_recipe_data'] = variation_recipe_data 
         formatted_recipe = format_recipe_for_display(variation_recipe_data)
         return render_template('recipe_details.html',
-                               meal_idea=new_meal_idea, # Display the NEW variation meal idea
+                               meal_idea=new_meal_idea, 
                                recipe=formatted_recipe,
                                user_inputs=user_inputs,
-                               show_save_options=True) # Offer to save new variation
+                               show_save_options=True) 
     else:
         flash(f"Could not find a recipe for the variation: '{new_meal_idea}'. Please try a different prompt.", 'error')
-        # If new recipe details generation fails, show new meal idea but indicate no recipe details
+       
         session.pop('current_recipe_data', None) # Clear it if no recipe found for this variation
         return render_template('recipe_details.html',
-                               meal_idea=new_meal_idea, # Display the new meal idea that failed
+                               meal_idea=new_meal_idea, 
                                recipe=None, # No recipe data to display
                                user_inputs=user_inputs,
                                show_save_options=False) # Don't offer to save if no recipe was found
@@ -243,27 +235,27 @@ def save_current_recipe():
 
     meal_idea = session.get('current_meal_idea')
     user_inputs = session.get('user_inputs')
-    recipe_data = session.get('current_recipe_data') # This is the raw data from API
+    recipe_data = session.get('current_recipe_data') 
 
     if not all([meal_idea, user_inputs, recipe_data]):
         flash("No valid recipe data in session to save. Please generate a new one.", 'error')
         return redirect(url_for('create_recipe_page'))
 
-    user_id = session['user_id'] # Get user_id from session
+    user_id = session['user_id'] 
 
     try:
         db.save_meal(
             meal_idea=meal_idea,
             user_inputs=user_inputs,
-            recipe_data=recipe_data, # Save the raw recipe_data
-            user_id=user_id # Pass user_id to save_meal
+            recipe_data=recipe_data, 
+            user_id=user_id 
         )
         flash("Recipe saved successfully!", 'success')
-        # Clear session data after saving, as it's now in history
+     
         session.pop('current_meal_idea', None)
         session.pop('user_inputs', None)
         session.pop('current_recipe_data', None)
-    except ValueError as e: # Catch ValueError re-raised by database.py
+    except ValueError as e: 
         flash(f"Error saving recipe: {e}", 'error')
     except Exception as e:
         flash(f"An unexpected error occurred while saving: {e}", 'error')
@@ -273,7 +265,7 @@ def save_current_recipe():
 
 @app.route('/discard_current_recipe', methods=['POST'])
 def discard_current_recipe():
-    # Clear temporary recipe data from session
+
     session.pop('current_meal_idea', None)
     session.pop('user_inputs', None)
     session.pop('current_recipe_data', None)
@@ -287,10 +279,10 @@ def view_history():
         flash('Please login to view history.', 'warning')
         return redirect(url_for('login'))
 
-    user_id = session['user_id'] # Get user ID from session
-    history = db.meal_history(user_id) # Call with user_id
+    user_id = session['user_id'] 
+    history = db.meal_history(user_id) 
 
-    # IMPORTANT: history_data is the variable passed to the template
+
     return render_template('history.html', history_data=history)
 
 
@@ -300,14 +292,14 @@ def delete_meal(meal_id):
         flash('Please login to delete recipes.', 'warning')
         return redirect(url_for('login'))
 
-    user_id = session['user_id'] # Get user ID from session
+    user_id = session['user_id']
     try:
-        success = db.delete_meal(meal_id, user_id) # Pass user_id to delete_meal
+        success = db.delete_meal(meal_id, user_id)
         if success:
             flash(f'Recipe deleted successfully!', 'success')
         else:
             flash(f'Recipe not found or you do not have permission to delete it.', 'error')
-    except ValueError as e: # Catch ValueError re-raised by database.py
+    except ValueError as e: 
         flash(f"Error deleting recipe: {e}", 'error')
     except Exception as e:
         flash(f"An unexpected error occurred while deleting: {e}", 'error')
@@ -315,7 +307,7 @@ def delete_meal(meal_id):
     return redirect(url_for('view_history'))
 
 
-# --- New Google Places API functions for Grocery Stores ---
+
 def get_location_from_zip(zipcode, api_key):
     """Converts a ZIP code to latitude and longitude using Google Geocoding API."""
     geo_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={zipcode}&key={api_key}"
@@ -340,8 +332,8 @@ def find_grocery_stores(location, api_key):
     nearby_url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
     nearby_params = {
         "location": location,
-        "radius": 5000, # 5000 meters = 5 km radius
-        "type": "grocery_or_supermarket", # Use 'grocery_or_supermarket' for more specific results
+        "radius": 5000, 
+        "type": "grocery_or_supermarket", 
         "key": api_key
     }
 
@@ -351,13 +343,13 @@ def find_grocery_stores(location, api_key):
         stores = []
 
         if data['status'] == 'OK':
-            for place in data['results'][:5]:  # Limit to top 5 stores
-                # Get more details for each place
+            for place in data['results'][:5]: 
+               
                 place_id = place['place_id']
                 details_url = "https://maps.googleapis.com/maps/api/place/details/json"
                 details_params = {
                     "place_id": place_id,
-                    "fields": "name,vicinity,opening_hours,url", # Added 'url' for link to map
+                    "fields": "name,vicinity,opening_hours,url", 
                     "key": api_key
                 }
                 details_response = requests.get(details_url, params=details_params)
@@ -371,7 +363,7 @@ def find_grocery_stores(location, api_key):
                         "name": result.get("name", "Unknown Store"),
                         "address": result.get("vicinity", "No address available"),
                         "hours": hours,
-                        "google_maps_url": result.get("url", "#") # Link to Google Maps
+                        "google_maps_url": result.get("url", "#") 
                     })
         else:
             print(f"Places API error: {data.get('error_message', data['status'])}")
@@ -391,7 +383,7 @@ def grocery_near_me():
         return redirect(url_for('login'))
 
     try:
-        # Retrieve current recipe data from session to re-render recipe_details.html
+     
         meal_idea = session.get('current_meal_idea')
         formatted_recipe = format_recipe_for_display(session.get('current_recipe_data'))
         user_inputs = session.get('user_inputs')
@@ -403,7 +395,7 @@ def grocery_near_me():
                                    meal_idea=meal_idea,
                                    recipe=formatted_recipe,
                                    user_inputs=user_inputs,
-                                   show_save_options=True) # Keep save options
+                                   show_save_options=True) 
 
         if not GOOGLE_API_KEY:
             flash("Google API Key is not configured. Cannot find grocery stores.", 'error')
@@ -431,14 +423,14 @@ def grocery_near_me():
                                meal_idea=meal_idea,
                                recipe=formatted_recipe,
                                user_inputs=user_inputs,
-                               show_save_options=True, # Keep save options
+                               show_save_options=True, 
                                stores=stores,
-                               zipcode=zipcode) # Pass zipcode back to pre-fill form
+                               zipcode=zipcode) 
 
     except Exception as e:
-        traceback.print_exc() # Print full traceback for debugging
+        traceback.print_exc()
         flash(f"An error occurred while finding grocery stores: {e}", 'error')
-        # Re-render recipe_details with existing data
+   
         return render_template('recipe_details.html',
                                meal_idea=session.get('current_meal_idea'),
                                recipe=format_recipe_for_display(session.get('current_recipe_data')),
