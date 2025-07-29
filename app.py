@@ -5,15 +5,16 @@ from recipe_creation import CreateRecipe
 from database import Database
 from utils import format_recipe_for_display, format_history_for_display
 import os
-<<<<<<< HEAD
+import requests
+from datetime import timedelta
 import openai
 from dotenv import load_dotenv
+import traceback
 
 load_dotenv()
+
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
-=======
-from datetime import timedelta
->>>>>>> a926118ae143f59143e269b3f26e5314861ed6d3
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -21,12 +22,14 @@ app.secret_key = os.urandom(24)
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'your-secret-string')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 
+
 jwt = JWTManager(app)
 
 
 db = Database()
 meal_suggestion_service = CreateMeal()
 recipe_creation_service = CreateRecipe()
+
 
 
 @app.route('/')
@@ -38,65 +41,6 @@ def index():
 def about():
    
     return render_template('about.html')
-@app.route('/grocery_prices', methods=['POST'])
-def grocery_prices():
-    zipcode = request.form['zipcode']
-    recipe = session.get('current_recipe')
-
-    print("ZIP code entered:", zipcode)
-    print("Recipe pulled from session:", recipe)
-
-    if not recipe:
-        print("❌ No recipe found in session.")
-        return render_template('recipe_details.html', error_message="No recipe available.", recipe=None)
-
-    ingredients = recipe.get('ingredients_list', [])
-    print("Ingredients for grocery finder:", ingredients)
-
-    prompt = f"""
-    Based on ZIP code {zipcode}, suggest the cheapest grocery store for each of the following ingredients:
-
-    {', '.join(ingredients)}
-
-    Format like:
-    - Ingredient: Suggested Store
-    """
-
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You're a helpful grocery assistant."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.6
-        )
-        suggestions_text = response['choices'][0]['message']['content']
-        print("OpenAI response:", suggestions_text)
-
-        grocery_suggestions = []
-        for line in suggestions_text.strip().split("\n"):
-            if ':' in line:
-                ingredient, store = line.split(':', 1)
-                grocery_suggestions.append({
-                    'ingredient': ingredient.strip(),
-                    'store': store.strip()
-                })
-
-        return render_template(
-            'recipe_details.html',
-            recipe=recipe,
-            grocery_suggestions=grocery_suggestions,
-            zipcode=zipcode
-        )
-    except Exception as e:
-        print("Grocery Finder Error:", e)  
-        return render_template(
-            'recipe_details.html',
-            recipe=recipe,
-            error_message="Something went wrong getting store suggestions.",
-            zipcode=zipcode
-        )
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -153,8 +97,43 @@ def create_recipe_page():
     if 'user_id' not in session:
         flash('Please login to create recipes')
         return redirect(url_for('login'))
+
+    # ZIP form submitted to show grocery stores
+    if request.method == 'POST' and 'zipcode' in request.form:
+        try:
+            zipcode = request.form['zipcode']
+            google_api_key = os.getenv("GOOGLE_API_KEY")
+
+            # Step 1: Convert ZIP to lat/lng
+            geo_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={zipcode}&key={google_api_key}"
+            geo_response = requests.get(geo_url).json()
+
+            if geo_response["status"] != "OK":
+                raise Exception("Invalid ZIP code.")
+
+            location = geo_response["results"][0]["geometry"]["location"]
+            lat, lng = location["lat"], location["lng"]
+
+            # Step 2: Get grocery stores
+            places_url = (
+                f"https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+                f"?location={lat},{lng}&radius=5000&type=grocery_or_supermarket&key={google_api_key}"
+            )
+            places_response = requests.get(places_url).json()
+            stores = places_response.get("results", [])
+
+            # Re-render recipe page with grocery data
+            formatted_recipe = session.get('current_recipe')
+            meal_idea = session.get('current_meal_idea')
+            return render_template('recipe_details.html', recipe=formatted_recipe, meal_idea=meal_idea, stores=stores, zipcode=zipcode)
+
+        except Exception as e:
+            formatted_recipe = session.get('current_recipe')
+            meal_idea = session.get('current_meal_idea')
+            return render_template('recipe_details.html', recipe=formatted_recipe, meal_idea=meal_idea, error_message=str(e))
+
+    # Initial recipe creation flow
     if request.method == 'POST':
-        # Get user inputs from the form
         type_of_meal = request.form['type_of_meal']
         budget = request.form['budget']
         mood = request.form['mood']
@@ -172,12 +151,11 @@ def create_recipe_page():
         }
 
         meal_idea = meal_suggestion_service.create_meal(
-            type_of_meal,budget, mood, tools, time, dietary_restrictions
+            type_of_meal, budget, mood, tools, time, dietary_restrictions
         )
 
         if not meal_idea:
-            
-            return render_template('create_recipe.html', error_message="Sorry, couldn't come up with a meal idea. Please try again with different preferences.")
+            return render_template('create_recipe.html', error_message="Sorry, couldn't come up with a meal idea. Please try again.")
 
         session['current_meal_idea'] = meal_idea
 
@@ -186,8 +164,7 @@ def create_recipe_page():
         )
 
         if not recipe_data:
-            
-            return render_template('create_recipe.html', error_message="Couldn't find or generate a suitable recipe. Please try a different meal idea or adjust your preferences.")
+            return render_template('create_recipe.html', error_message="Couldn't generate a recipe. Try adjusting your preferences.")
 
         db.save_meal(
             meal_idea=meal_idea,
@@ -198,7 +175,8 @@ def create_recipe_page():
 
         formatted_recipe = format_recipe_for_display(recipe_data)
         session['current_recipe'] = formatted_recipe
-        session['current_recipe_data'] = recipe_data 
+        session['current_recipe_data'] = recipe_data
+
         return render_template('recipe_details.html', recipe=formatted_recipe, meal_idea=meal_idea)
 
     return render_template('create_recipe.html')
@@ -261,5 +239,57 @@ def variation():
             recipe=format_recipe_for_display(recipe_creation_service.req_recipe_details(base_idea, **user_inputs)),
             error_message="Could not find a recipe for this variation."
         )
+def get_location_from_zip(zipcode, api_key):
+    response = requests.get(f"https://maps.googleapis.com/maps/api/geocode/json?address={zipcode}&key={api_key}")
+    data = response.json()
+    if data['status'] == 'OK':
+        location = data['results'][0]['geometry']['location']
+        return f"{location['lat']},{location['lng']}"
+    return None
+
+def find_grocery_stores(location, api_key):
+    url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+    params = {
+        "location": location,
+        "radius": 5000,
+        "type": "supermarket",
+        "key": api_key
+    }
+    response = requests.get(url, params=params)
+    data = response.json()
+    stores = []
+    if data['status'] == 'OK':
+        for place in data['results'][:5]:  # limit to 5 stores
+            stores.append({
+                "name": place['name'],
+                "address": place.get('vicinity', 'Address not available')
+            })
+    return stores
+
+@app.route('/grocery_near_me', methods=['POST'])
+def grocery_near_me():
+    try:
+        recipe = session.get('current_recipe')
+        if not recipe:
+            return render_template('recipe_details.html', error_message="No recipe found in session.")
+
+        zipcode = request.form.get('zipcode')
+        if not zipcode:
+            return render_template('recipe_details.html', recipe=recipe, error_message="No ZIP code provided.")
+
+        # Example: Using Google Places API to find grocery stores near ZIP
+        api_key = os.environ.get("GOOGLE_API_KEY")
+        location = get_location_from_zip(zipcode, api_key)
+        if not location:
+            return render_template('recipe_details.html', recipe=recipe, error_message="Invalid ZIP code.")
+
+        stores = find_grocery_stores(location, api_key)
+
+        return render_template('recipe_details.html', recipe=recipe, stores=stores, zipcode=zipcode)
+    
+    except Exception as e:
+        traceback.print_exc()
+        return render_template('recipe_details.html', error_message=str(e))
+
 if __name__ == '__main__':
     app.run(debug=True)

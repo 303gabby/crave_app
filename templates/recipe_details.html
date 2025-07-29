@@ -65,26 +65,30 @@
             </form>
             <hr>
 
-            <h2>Find Cheapest Stores for Ingredients</h2>
-            <form action="{{ url_for('grocery_prices') }}" method="POST">
-                <label for="zipcode">Enter your ZIP code:</label>
-                <input type="text" id="zipcode" name="zipcode" required>
-                <input type="submit" value="Find Stores">
-            </form>
-
-            {% if grocery_suggestions %}
-            <h3>Suggested Stores Near {{ zipcode }}</h3>
-            <ul>
-            {% for item in grocery_suggestions %}
-            <li><strong>{{ item.ingredient }}:</strong> {{ item.store }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
 
             <button class="dee"><a href="{{ url_for('view_history') }}">View Recipe History</a></button>
             <button class="dee"><a href="{{ url_for('create_recipe_page') }}">Start a New Recipe</a></button>
-            
-            
+
+            <hr>
+            <h2>Find Grocery Stores Near You</h2>
+            <form method="POST" action="{{ url_for('grocery_near_me') }}" class="zip-form">
+                <label for="zipcode" style="color: white;">Enter ZIP Code:</label>
+                <input type="text" name="zipcode" id="zipcode" placeholder="e.g. 90210" required>
+                <button type="submit">Find Stores</button>
+            </form>
+
+            {% if stores %}
+                <h2>Nearby Grocery Stores ({{ zipcode }})</h2>
+                <ul class = "grocery-list">
+                    {% for store in stores %}
+                        <li class = "grocery-item">
+                            <strong>{{ store.name }} — {{ store.address }} </strong>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% elif zipcode %}
+                <p style = "color: white; text-align: center;">No stores found near {{ zipcode }}</p>
+            {% endif %}
         {% else %}
             <p>No recipe found. Please go back and try again.</p>
             <p><a href="{{ url_for('index') }}">Go Back Home</a></p>

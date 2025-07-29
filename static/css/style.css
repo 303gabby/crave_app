@@ -385,13 +385,63 @@ a:hover {
     color: white;
     text-decoration: none;
 }
+/* Grocery ZIP Form */
 .zip-form {
-  margin-top: 10px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    text-align: center;
 }
-.zip-form input {
-  padding: 5px;
-  margin-right: 10px;
+
+.zip-form input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 250px;
 }
+
 .zip-form button {
-  padding: 5px 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #326132;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.zip-form button:hover {
+    background-color: #4cae4c;
+}
+
+/* Grocery Store List */
+.grocery-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    color: white;
+}
+
+.grocery-item {
+    background-color: #ffffff;
+    color: #35582f;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+.grocery-results-box {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-top: 20px;
+    border: 2px solid #5E9B53;
+    border-radius: 12px;
+}
+
+.grocery-results-box h3 {
+    color: #326132;
+    margin-bottom: 15px;
+    text-align: center;
 }
