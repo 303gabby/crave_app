@@ -31,6 +31,56 @@ def about():
    
     return render_template('about.html')
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        
+        if not username or not email or not password:
+            flash('All fields are required')
+            return render_template('register.html')
+        
+        try:
+            user_id = db.create_user(username, email, password)
+            flash('Registration successful! Please login.')
+            return redirect(url_for('login'))
+        except ValueError as e:
+            flash(str(e))
+            return render_template('register.html')
+    
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        if not username or not password:
+            flash('Username and password are required')
+            return render_template('login.html')
+        
+        user = db.get_user_by_username(username)
+        if user and db.verify_password(user, password):
+            access_token = create_access_token(identity=user['id'])
+            session['access_token'] = access_token
+            session['user_id'] = user['id']
+            session['username'] = user['username']
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid username or password')
+            return render_template('login.html')
+    
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out')
+    return redirect(url_for('index'))
+
 @app.route('/create_recipe_page', methods=['GET', 'POST'])
 def create_recipe_page():
     if request.method == 'POST':
