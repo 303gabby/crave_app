@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CraveApp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('about') }}">About</a></li>
+                    <li><a href="{{ url_for('register') }}">Register</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <h1>Login to CraveApp</h1>
+            
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <div class="alert">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            
+            <p class="auth-link">
+                Don't have an account? <a href="{{ url_for('register') }}">Register here</a>
+            </p>
+        </main>
+    </div>
+</body>
+</html>
