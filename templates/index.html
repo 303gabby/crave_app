@@ -39,7 +39,7 @@
             <p id="blurb">Crave helps you cook delicious, affordable meals based on your budget, mood, tools, time, and diet. Powered by the
                 OpenAI and the Tasty API—if we can’t find it, we’ll create it. Bon appétit!</p>
 
-            {# Update these main buttons based on login status #}
+           
             {% if session.user_id %} {# Using session.user_id for consistency #}
                 <button id="strec"><a href="{{ url_for('create_recipe_page') }}">Create New Recipe</a></button>
                 <button id="vrhis"><a href="{{ url_for('view_history') }}">View History</a></button>
@@ -47,7 +47,7 @@
                 <button id="strec"><a href="{{ url_for('login') }}">Login</a></button>
                 <button id="vrhis"><a href="{{ url_for('register') }}">Register</a></button>
             {% endif %}
-            {# End of optional update #}
+          
         </div>
         <div class="vis">
             <img id="pla" src="{{ url_for('static', filename='images/plate.png') }}" alt="picture of meal on plate">

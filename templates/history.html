@@ -37,7 +37,7 @@
             {% endif %}
         {% endwith %}
 
-        {# Assuming history_data is the variable passed from app.py, as per previous instructions #}
+       
         {% if history_data %}
             <div class="recipe-cards-container">
                 {% for meal in history_data %}
@@ -47,7 +47,7 @@
 
                         <h4>Your Preferences:</h4>
                         <ul>
-                            {# Loop through user_inputs dictionary items #}
+                          
                             {% for key, value in meal.user_inputs.items() %}
                                 <li>
                                     <strong>{{ key.replace('_', ' ').title() }}:</strong>
@@ -63,7 +63,7 @@
                         </ul>
 
                         <h4>Recipe Details:</h4>
-                        {# Access specific keys from the recipe_data dictionary #}
+                       
                         <p><strong>Title:</strong> {{ meal.recipe_data.title | default('N/A') }}</p>
                         <p><strong>Description:</strong> {{ meal.recipe_data.description | default('N/A') }}</p>
 
@@ -79,7 +79,7 @@
                         {% if meal.recipe_data.instructions %}
                         <p><strong>Instructions:</strong></p>
                          <ul>
-                          {# Split the single instructions string into a list of lines by newline characters #}
+                         
                           {% for instruction in meal.recipe_data.instructions.split('\n') %}
                           {# Check if the line is not empty after stripping whitespace, to avoid blank list items #}
                         {% if instruction.strip() %}

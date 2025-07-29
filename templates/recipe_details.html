@@ -32,7 +32,6 @@
     <div class="container">
         <h1>Your Personalized Recipe</h1>
 
-        {# Display flash messages #}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <ul class="flashes">
@@ -49,8 +48,8 @@
 
         {% if recipe %}
             <div class="recipe-card">
-                <h2>{{ meal_idea }}</h2> {# Changed to meal_idea, assuming it's the main title #}
-                {# You might still want recipe.title if it's different and relevant #}
+                <h2>{{ meal_idea }}</h2> 
+                
                 {% if recipe.image %}
                     <img src="{{ recipe.image }}" alt="{{ meal_idea }}" class="recipe-image">
                 {% endif %}
@@ -96,7 +95,7 @@
 
             <hr>
 
-            {# Conditional Save/Discard Buttons #}
+           
             {% if show_save_options %}
                 <div class="action-buttons">
                     <form action="{{ url_for('save_current_recipe') }}" method="POST" style="display: inline;">
@@ -164,7 +163,6 @@
             document.getElementById('loading-overlay').style.display = 'flex';
         });
 
-        // Add loading overlay for Save/Discard buttons too
         document.querySelectorAll('.action-buttons button').forEach(button => {
             button.addEventListener('click', function() {
                 document.getElementById('loading-overlay').style.display = 'flex';
