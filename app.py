@@ -1,17 +1,27 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from meal_suggestion import CreateMeal
 from recipe_creation import CreateRecipe
 from database import Database
 from utils import format_recipe_for_display, format_history_for_display
 import os
+<<<<<<< HEAD
 import openai
 from dotenv import load_dotenv
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
+=======
+from datetime import timedelta
+>>>>>>> a926118ae143f59143e269b3f26e5314861ed6d3
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'your-secret-string')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
+
+jwt = JWTManager(app)
 
 
 db = Database()
@@ -88,8 +98,61 @@ def grocery_prices():
             zipcode=zipcode
         )
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        
+        if not username or not email or not password:
+            flash('All fields are required')
+            return render_template('register.html')
+        
+        try:
+            user_id = db.create_user(username, email, password)
+            flash('Registration successful! Please login.')
+            return redirect(url_for('login'))
+        except ValueError as e:
+            flash(str(e))
+            return render_template('register.html')
+    
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        if not username or not password:
+            flash('Username and password are required')
+            return render_template('login.html')
+        
+        user = db.get_user_by_username(username)
+        if user and db.verify_password(user, password):
+            access_token = create_access_token(identity=user['id'])
+            session['access_token'] = access_token
+            session['user_id'] = user['id']
+            session['username'] = user['username']
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid username or password')
+            return render_template('login.html')
+    
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out')
+    return redirect(url_for('index'))
+
 @app.route('/create_recipe_page', methods=['GET', 'POST'])
 def create_recipe_page():
+    if 'user_id' not in session:
+        flash('Please login to create recipes')
+        return redirect(url_for('login'))
     if request.method == 'POST':
         # Get user inputs from the form
         type_of_meal = request.form['type_of_meal']
@@ -129,7 +192,8 @@ def create_recipe_page():
         db.save_meal(
             meal_idea=meal_idea,
             user_inputs=session['user_inputs'],
-            recipe_data=recipe_data
+            recipe_data=recipe_data,
+            user_id=session['user_id']
         )
 
         formatted_recipe = format_recipe_for_display(recipe_data)
@@ -141,12 +205,19 @@ def create_recipe_page():
 
 @app.route('/history')
 def view_history():
-    history = db.meal_history()
+    if 'user_id' not in session:
+        flash('Please login to view history')
+        return redirect(url_for('login'))
+    
+    history = db.meal_history(session['user_id'])
     formatted_history = format_history_for_display(history)
     return render_template('history.html', history_html=formatted_history)
 
 @app.route('/variation', methods=['POST'])
 def variation():
+    if 'user_id' not in session:
+        flash('Please login to create variations')
+        return redirect(url_for('login'))
     
     if 'user_inputs' not in session or 'current_meal_idea' not in session:
         return redirect(url_for('create_recipe_page'))
@@ -179,7 +250,8 @@ def variation():
         db.save_meal(
             meal_idea=new_meal_idea,
             user_inputs=user_inputs,
-            recipe_data=variation_recipe_data
+            recipe_data=variation_recipe_data,
+            user_id=session['user_id']
         )
         formatted_recipe = format_recipe_for_display(variation_recipe_data)
         return render_template('recipe_details.html', recipe=formatted_recipe, meal_idea=new_meal_idea)
