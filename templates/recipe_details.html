@@ -82,10 +82,23 @@
                 <ul class = "grocery-list">
                     {% for store in stores %}
                         <li class = "grocery-item">
-                            <strong>{{ store.name }} — {{ store.address }} </strong>
-                        </li>
-                    {% endfor %}
-                </ul>
+                            <strong>{{ store.name }} </strong><br>
+                            {{ store.address }}<br>
+                            {% if store.hours %}
+                            <details>
+                                <summary>Store Hours</summary>
+                                <ul>
+                                    {% for hour in store.hours %}
+                                        <li>{{ hour }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </details>
+                        {% else %}
+                            <em> Hours not available</em>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
             {% elif zipcode %}
                 <p style = "color: white; text-align: center;">No stores found near {{ zipcode }}</p>
             {% endif %}

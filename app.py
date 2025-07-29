@@ -248,22 +248,41 @@ def get_location_from_zip(zipcode, api_key):
     return None
 
 def find_grocery_stores(location, api_key):
-    url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json"
-    params = {
+    nearby_url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+    nearby_params = {
         "location": location,
         "radius": 5000,
         "type": "supermarket",
         "key": api_key
     }
-    response = requests.get(url, params=params)
+
+    response = requests.get(nearby_url, params=nearby_params)
     data = response.json()
     stores = []
+
     if data['status'] == 'OK':
-        for place in data['results'][:5]:  # limit to 5 stores
-            stores.append({
-                "name": place['name'],
-                "address": place.get('vicinity', 'Address not available')
-            })
+        for place in data['results'][:5]:  # Limit to 5
+            place_id = place['place_id']
+            details_url = "https://maps.googleapis.com/maps/api/place/details/json"
+            details_params = {
+                "place_id": place_id,
+                "fields": "name,vicinity,opening_hours",
+                "key": api_key
+            }
+
+            details_response = requests.get(details_url, params=details_params)
+            details_data = details_response.json()
+
+            if details_data['status'] == 'OK':
+                result = details_data['result']
+                hours = result.get('opening_hours', {}).get('weekday_text', [])
+
+                stores.append({
+                    "name": result.get("name", "Unknown"),
+                    "address": result.get("vicinity", "No address"),
+                    "hours": hours
+                })
+
     return stores
 
 @app.route('/grocery_near_me', methods=['POST'])
