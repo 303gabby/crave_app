@@ -1,12 +1,19 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from meal_suggestion import CreateMeal
 from recipe_creation import CreateRecipe
 from database import Database
 from utils import format_recipe_for_display, format_history_for_display
 import os
+from datetime import timedelta
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'your-secret-string')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
+
+jwt = JWTManager(app)
 
 
 db = Database()
