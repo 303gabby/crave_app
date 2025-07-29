@@ -83,6 +83,9 @@ def logout():
 
 @app.route('/create_recipe_page', methods=['GET', 'POST'])
 def create_recipe_page():
+    if 'user_id' not in session:
+        flash('Please login to create recipes')
+        return redirect(url_for('login'))
     if request.method == 'POST':
         # Get user inputs from the form
         type_of_meal = request.form['type_of_meal']
@@ -122,7 +125,8 @@ def create_recipe_page():
         db.save_meal(
             meal_idea=meal_idea,
             user_inputs=session['user_inputs'],
-            recipe_data=recipe_data
+            recipe_data=recipe_data,
+            user_id=session['user_id']
         )
 
         formatted_recipe = format_recipe_for_display(recipe_data)
@@ -132,12 +136,19 @@ def create_recipe_page():
 
 @app.route('/history')
 def view_history():
-    history = db.meal_history()
+    if 'user_id' not in session:
+        flash('Please login to view history')
+        return redirect(url_for('login'))
+    
+    history = db.meal_history(session['user_id'])
     formatted_history = format_history_for_display(history)
     return render_template('history.html', history_html=formatted_history)
 
 @app.route('/variation', methods=['POST'])
 def variation():
+    if 'user_id' not in session:
+        flash('Please login to create variations')
+        return redirect(url_for('login'))
     
     if 'user_inputs' not in session or 'current_meal_idea' not in session:
         return redirect(url_for('create_recipe_page'))
@@ -170,7 +181,8 @@ def variation():
         db.save_meal(
             meal_idea=new_meal_idea,
             user_inputs=user_inputs,
-            recipe_data=variation_recipe_data
+            recipe_data=variation_recipe_data,
+            user_id=session['user_id']
         )
         formatted_recipe = format_recipe_for_display(variation_recipe_data)
         return render_template('recipe_details.html', recipe=formatted_recipe, meal_idea=new_meal_idea)
