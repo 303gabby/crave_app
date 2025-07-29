@@ -385,3 +385,13 @@ a:hover {
     color: white;
     text-decoration: none;
 }
+.zip-form {
+  margin-top: 10px;
+}
+.zip-form input {
+  padding: 5px;
+  margin-right: 10px;
+}
+.zip-form button {
+  padding: 5px 10px;
+}

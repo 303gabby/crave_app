@@ -4,6 +4,11 @@ from recipe_creation import CreateRecipe
 from database import Database
 from utils import format_recipe_for_display, format_history_for_display
 import os
+import openai
+from dotenv import load_dotenv
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -23,6 +28,65 @@ def index():
 def about():
    
     return render_template('about.html')
+@app.route('/grocery_prices', methods=['POST'])
+def grocery_prices():
+    zipcode = request.form['zipcode']
+    recipe = session.get('current_recipe')
+
+    print("ZIP code entered:", zipcode)
+    print("Recipe pulled from session:", recipe)
+
+    if not recipe:
+        print("❌ No recipe found in session.")
+        return render_template('recipe_details.html', error_message="No recipe available.", recipe=None)
+
+    ingredients = recipe.get('ingredients_list', [])
+    print("Ingredients for grocery finder:", ingredients)
+
+    prompt = f"""
+    Based on ZIP code {zipcode}, suggest the cheapest grocery store for each of the following ingredients:
+
+    {', '.join(ingredients)}
+
+    Format like:
+    - Ingredient: Suggested Store
+    """
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You're a helpful grocery assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.6
+        )
+        suggestions_text = response['choices'][0]['message']['content']
+        print("OpenAI response:", suggestions_text)
+
+        grocery_suggestions = []
+        for line in suggestions_text.strip().split("\n"):
+            if ':' in line:
+                ingredient, store = line.split(':', 1)
+                grocery_suggestions.append({
+                    'ingredient': ingredient.strip(),
+                    'store': store.strip()
+                })
+
+        return render_template(
+            'recipe_details.html',
+            recipe=recipe,
+            grocery_suggestions=grocery_suggestions,
+            zipcode=zipcode
+        )
+    except Exception as e:
+        print("Grocery Finder Error:", e)  
+        return render_template(
+            'recipe_details.html',
+            recipe=recipe,
+            error_message="Something went wrong getting store suggestions.",
+            zipcode=zipcode
+        )
 
 @app.route('/create_recipe_page', methods=['GET', 'POST'])
 def create_recipe_page():
@@ -69,6 +133,8 @@ def create_recipe_page():
         )
 
         formatted_recipe = format_recipe_for_display(recipe_data)
+        session['current_recipe'] = formatted_recipe
+        session['current_recipe_data'] = recipe_data 
         return render_template('recipe_details.html', recipe=formatted_recipe, meal_idea=meal_idea)
 
     return render_template('create_recipe.html')
@@ -123,6 +189,5 @@ def variation():
             recipe=format_recipe_for_display(recipe_creation_service.req_recipe_details(base_idea, **user_inputs)),
             error_message="Could not find a recipe for this variation."
         )
-
 if __name__ == '__main__':
     app.run(debug=True)
