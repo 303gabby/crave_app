@@ -4,23 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe History - Crave</title>
-    <link rel="icon" href="/assets/logo.png">
+    <link rel="icon" href="{{ url_for('static', filename='assets/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
 </head>
 <body>
-      <nav>
-        <ul class = "nvbar">
+    <nav>
+        <ul class="nvbar">
             <li><a href="{{ url_for('index') }}">Home</a></li>
             <li><a href="{{ url_for('about') }}">About</a></li>
             <li><a href="{{ url_for('create_recipe_page') }}">Create a New Recipe</a></li>
             <li> <a href="{{ url_for('view_history') }}">Recipe History</a></li>
+            {% if session.user_id %}
+                <li>Welcome, {{ session.username }}!</li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('register') }}">Register</a></li>
+            {% endif %}
+            {# You have "Recipe History" twice in your navbar, you can remove one if you like #}
+            <li><a href="{{ url_for('view_history') }}">Recipe History</a></li>
         </ul>
     </nav>
     <div class="container">
         <h1>Your Recipe History</h1>
-        {% if history_html %}
-            {{ history_html | safe }}
+
+        {# Display flash messages #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {# Assuming history_data is the variable passed from app.py, as per previous instructions #}
+        {% if history_data %}
+            <div class="recipe-cards-container">
+                {% for meal in history_data %}
+                    <div class="recipe-card">
+                        <h3>{{ meal.meal_idea }}</h3>
+                        <p><small>Saved on: {{ meal.timestamp }}</small></p>
+
+                        <h4>Your Preferences:</h4>
+                        <ul>
+                            {# Loop through user_inputs dictionary items #}
+                            {% for key, value in meal.user_inputs.items() %}
+                                <li>
+                                    <strong>{{ key.replace('_', ' ').title() }}:</strong>
+                                    {% if value is iterable and not value is string %}
+                                        {# If the value is a list (like tools or dietary_restrictions), join them #}
+                                        {{ value | join(', ') }}
+                                    {% else %}
+                                        {# Otherwise, display the value directly #}
+                                        {{ value }}
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <h4>Recipe Details:</h4>
+                        {# Access specific keys from the recipe_data dictionary #}
+                        <p><strong>Title:</strong> {{ meal.recipe_data.title | default('N/A') }}</p>
+                        <p><strong>Description:</strong> {{ meal.recipe_data.description | default('N/A') }}</p>
+
+                        {% if meal.recipe_data.ingredients %}
+                            <p><strong>Ingredients:</strong></p>
+                            <ul>
+                                {% for ingredient in meal.recipe_data.ingredients %}
+                                    <li>{{ ingredient }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        {% if meal.recipe_data.instructions %}
+                        <p><strong>Instructions:</strong></p>
+                         <ul>
+                          {# Split the single instructions string into a list of lines by newline characters #}
+                          {% for instruction in meal.recipe_data.instructions.split('\n') %}
+                          {# Check if the line is not empty after stripping whitespace, to avoid blank list items #}
+                        {% if instruction.strip() %}
+                         <li>{{ instruction | trim }}</li> {# Use trim to remove leading/trailing whitespace #}
+                        {% endif %}
+                        {% endfor %}
+                         </ul>
+{% endif %}
+                        <form action="{{ url_for('delete_meal', meal_id=meal.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete \'{{ meal.meal_idea }}\'?');">
+                                &times; {# HTML entity for multiplication sign, commonly used as an 'X' #}
+                            </button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
         {% else %}
             <p>No past meals found in your history.</p>
         {% endif %}

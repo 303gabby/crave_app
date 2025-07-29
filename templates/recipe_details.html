@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Personalized Recipe - Crave</title>
-    <link rel="icon" href="/assets/logo.png">
+    <link rel="icon" href="{{ url_for('static', filename='assets/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Seaweed+Script&display=swap" rel="stylesheet">
-
+   
 </head>
 <body>
     <div id="loading-overlay" class="loading-overlay">
@@ -24,31 +24,82 @@
     </nav>
     <div class="container">
         <h1>Your Personalized Recipe</h1>
+
+        {# Display flash messages #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
         {% if error_message %}
             <p class="error">{{ error_message }}</p>
         {% endif %}
 
         {% if recipe %}
             <div class="recipe-card">
-                <h2>{{ recipe.title }}</h2>
+                <h2>{{ meal_idea }}</h2> {# Changed to meal_idea, assuming it's the main title #}
+                {# You might still want recipe.title if it's different and relevant #}
                 {% if recipe.image %}
-                    <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-image">
+                    <img src="{{ recipe.image }}" alt="{{ meal_idea }}" class="recipe-image">
                 {% endif %}
                 <p><strong>Servings:</strong> {{ recipe.servings }}</p>
                 <p><strong>Ready in:</strong> {{ recipe.readyInMinutes }} minutes</p>
-                <p><strong>Source:</strong> "{{ recipe.sourceUrl }}" </p>
+                {% if recipe.sourceUrl %}
+                    <p><strong>Source:</strong> <a href="{{ recipe.sourceUrl }}" target="_blank">View Original Recipe</a></p>
+                {% endif %}
+
+                {# Display User Inputs #}
+                <h3>Your Inputs:</h3>
+                <div class="user-inputs-display">
+                    {% if user_inputs %}
+                        {% for key, value in user_inputs.items() %}
+                            <p><strong>{{ key.replace('_', ' ').title() }}:</strong> 
+                            {% if value is iterable and not value is string %}
+                                {{ value | join(', ') }}
+                            {% else %}
+                                {{ value }}
+                            {% endif %}
+                            </p>
+                        {% endfor %}
+                    {% else %}
+                        <p>No user inputs recorded for this recipe.</p>
+                    {% endif %}
+                </div>
 
                 <h3>Ingredients:</h3>
-                {{ recipe.ingredients_html | safe }}
+                {% if recipe.ingredients_html %}
+                    {{ recipe.ingredients_html | safe }}
+                {% else %}
+                    <p>No ingredients found for this recipe.</p>
+                {% endif %}
 
                 <h3>Instructions:</h3>
-                {{ recipe.instructions_html | safe }}
+                {% if recipe.instructions_html %}
+                    {{ recipe.instructions_html | safe }}
+                {% else %}
+                    <p>No instructions found for this recipe.</p>
+                {% endif %}
 
-                <h3>Nutritional Information:</h3>
-                {{ recipe.nutrition_html | safe }}
             </div>
 
             <hr>
+
+            {# Conditional Save/Discard Buttons #}
+            {% if show_save_options %}
+                <div class="action-buttons">
+                    <form action="{{ url_for('save_current_recipe') }}" method="POST" style="display: inline;">
+                        <button type="submit" class="save" onclick="document.getElementById('loading-overlay').style.display = 'flex';">Save Recipe</button>
+                    </form>
+                    <form action="{{ url_for('discard_current_recipe') }}" method="POST" style="display: inline;">
+                        <button type="submit" class="discard" onclick="document.getElementById('loading-overlay').style.display = 'flex';">Discard Recipe</button>
+                    </form>
+                </div>
+            {% endif %}
 
             <h2>Explore More Options</h2>
             <form method="POST" action="{{ url_for('variation') }}">
@@ -57,9 +108,10 @@
                 <button type="submit" id="get-variation-button">Get Variation</button>
             </form>
 
-           
-            <button class="dee"><a href="{{ url_for('view_history') }}">View Recipe History</a></button>
-            <button class="dee"><a href="{{ url_for('create_recipe_page') }}">Start a New Recipe</a></button>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="{{ url_for('view_history') }}" class="dee">View Recipe History</a>
+                <a href="{{ url_for('create_recipe_page') }}" class="dee">Start a New Recipe</a>
+            </div>
             
         {% else %}
             <p>No recipe found. Please go back and try again.</p>
@@ -69,6 +121,13 @@
     <script>
         document.getElementById('get-variation-button').addEventListener('click', function() {
             document.getElementById('loading-overlay').style.display = 'flex';
+        });
+
+        // Add loading overlay for Save/Discard buttons too
+        document.querySelectorAll('.action-buttons button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.getElementById('loading-overlay').style.display = 'flex';
+            });
         });
     </script>
 </body>

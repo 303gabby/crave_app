@@ -52,26 +52,3 @@ def format_recipe_for_display(recipe_data):
         'nutrition_html': nutrition_html
     }
 
-def format_history_for_display(history):
-    """
-    Formats the recipe history for display in HTML.
-    """
-    if not history:
-        return "No past meals found."
-
-    history_html = ""
-    for i, meal in enumerate(history):
-        history_html += f"<div class='history-entry'>"
-        history_html += f"<h3>Meal {i+1} (Cooked on: {meal['timestamp']})</h3>"
-        history_html += f"<p><strong>Meal Idea:</strong> {meal['meal_idea']}</p>"
-        history_html += f"<p><strong>Your Inputs:</strong></p>"
-        history_html += "<ul>"
-        for key, value in meal['user_inputs'].items():
-            if isinstance(value, list):
-                history_html += f"<li>{key.replace('_', ' ').title()}: {', '.join(value)}</li>"
-            else:
-                history_html += f"<li>{key.replace('_', ' ').title()}: {value}</li>"
-        history_html += "</ul>"
-        history_html += f"<p><strong>Recipe Name:</strong> {meal['recipe_data'].get('title', 'N/A')}</p>"
-        history_html += "</div><hr>"
-    return history_html

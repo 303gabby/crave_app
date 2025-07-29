@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crave - Personalized Meals for College Students</title>
-    <link rel="icon" href="logo.png">
+    <link rel="icon" href="{{ url_for('static', filename='assets/logo.png') }}"> {# Assuming logo.png is in static/assets #}
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Seaweed+Script&display=swap" rel="stylesheet">
 
@@ -17,6 +17,15 @@
             <li><a href="{{ url_for('about') }}">About</a></li>
             <li><a href="{{ url_for('create_recipe_page') }}">Create a New Recipe</a></li>
             <li> <a href="{{ url_for('view_history') }}">Recipe History</a></li>
+
+         
+            {% if user_logged_in %}
+                <li>Welcome, {{ username }}!</li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('register') }}">Register</a></li>
+            {% endif %}
         </ul>
     </nav>
     <br>
@@ -29,10 +38,18 @@
                 <li>Real broke. </li>
                  <li>Real quick. </li>
             </ul>
-            <p id = "blurb">Crave helps you cook delicious, affordable meals based on your budget, mood, tools, time, and diet. Powered by the 
+            <p id = "blurb">Crave helps you cook delicious, affordable meals based on your budget, mood, tools, time, and diet. Powered by the
                 OpenAI and the Tasty API—if we can’t find it, we’ll create it. Bon appétit!</p>
-                <button id ="strec"><a href="{{ url_for('create_recipe_page') }}">Start a New Recipe</a></button>
-                <button id ="vrhis"><a href="{{ url_for('view_history') }}">View Recipe History</a></button>
+
+            {# OPTIONAL: Update these main buttons based on login status too #}
+            {% if user_logged_in %}
+                <button id ="strec"><a href="{{ url_for('create_recipe_page') }}">Create New Recipe</a></button>
+                <button id ="vrhis"><a href="{{ url_for('view_history') }}">View History</a></button>
+            {% else %}
+                <button id ="strec"><a href="{{ url_for('login') }}">Login</a></button>
+                <button id ="vrhis"><a href="{{ url_for('register') }}">Register</a></button>
+            {% endif %}
+            {# End of optional update #}
         </div>
         <div class = "vis">
             <img id= "pla" src="{{ url_for('static', filename='images/plate.png') }}" alt="picture of meal on plate">

@@ -184,7 +184,6 @@ class CreateRecipe:
             'sourceUrl': 'AI Generated',
             'extendedIngredients': [],
             'instructions': '',
-            'nutrition': {'nutrients': []}
         }
 
         lines = genai_text.split('\n')
@@ -236,16 +235,7 @@ class CreateRecipe:
             elif current_section == 'instructions':
                 looped_ai_recipe['instructions'] += line + "\n"
           
-            elif line.startswith("Nutritonal Facts:"): 
-                nutrition_summary = line.replace("Nutritonal Facts:", "").strip()
-                if nutrition_summary and nutrition_summary != '[Z]':
-                    looped_ai_recipe['nutrition']['nutrients'].append({
-                        'name': 'Summary',
-                        'amount': nutrition_summary,
-                        'unit': ''
-                    })
-                current_section = 'nutrition'
-
+           
         looped_ai_recipe['instructions'] = looped_ai_recipe['instructions'].strip()
         
        
