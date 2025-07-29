@@ -8,18 +8,25 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Seaweed+Script&display=swap" rel="stylesheet">
-   
+
 </head>
 <body>
     <div id="loading-overlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
      <nav>
-        <ul class = "nvbar">
+        <ul class="nvbar">
             <li><a href="{{ url_for('index') }}">Home</a></li>
             <li><a href="{{ url_for('about') }}">About</a></li>
             <li><a href="{{ url_for('create_recipe_page') }}">Create a New Recipe</a></li>
             <li> <a href="{{ url_for('view_history') }}">Recipe History</a></li>
+            {% if session.user_id %}
+                <li>Welcome, {{ session.username }}!</li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('register') }}">Register</a></li>
+            {% endif %}
         </ul>
     </nav>
     <div class="container">
@@ -58,7 +65,7 @@
                 <div class="user-inputs-display">
                     {% if user_inputs %}
                         {% for key, value in user_inputs.items() %}
-                            <p><strong>{{ key.replace('_', ' ').title() }}:</strong> 
+                            <p><strong>{{ key.replace('_', ' ').title() }}:</strong>
                             {% if value is iterable and not value is string %}
                                 {{ value | join(', ') }}
                             {% else %}
@@ -107,12 +114,46 @@
                 <input type="text" id="variation_prompt" name="variation_prompt" required>
                 <button type="submit" id="get-variation-button">Get Variation</button>
             </form>
+            <hr>
 
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="{{ url_for('view_history') }}" class="dee">View Recipe History</a>
-                <a href="{{ url_for('create_recipe_page') }}" class="dee">Start a New Recipe</a>
-            </div>
-            
+            <button class="dee"><a href="{{ url_for('view_history') }}">View Recipe History</a></button>
+            <button class="dee"><a href="{{ url_for('create_recipe_page') }}">Start a New Recipe</a></button>
+
+            <hr>
+            <h2>Find Grocery Stores Near You</h2>
+            <form method="POST" action="{{ url_for('grocery_near_me') }}" class="zip-form">
+                <label for="zipcode" style="color: white;">Enter ZIP Code:</label>
+                <input type="text" name="zipcode" id="zipcode" placeholder="e.g. 90210" required>
+                <button type="submit">Find Stores</button>
+            </form>
+
+            {% if stores %}
+                <div class="grocery-results-box">
+                    <h3>Nearby Grocery Stores ({{ zipcode }})</h3>
+                    <ul class="grocery-list">
+                        {% for store in stores %}
+                            <li class="grocery-item">
+                                <h4>{{ store.name }}</h4>
+                                <p>{{ store.address }}</p>
+                                {% if store.hours %}
+                                <details>
+                                    <summary>Store Hours</summary>
+                                    <ul>
+                                        {% for hour in store.hours %}
+                                            <li>{{ hour }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </details>
+                            {% else %}
+                                <p><em>Hours not available</em></p>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                </div>
+            {% elif zipcode %}
+                <p style="color: white; text-align: center;">No stores found near {{ zipcode }}</p>
+            {% endif %}
         {% else %}
             <p>No recipe found. Please go back and try again.</p>
             <p><a href="{{ url_for('index') }}">Go Back Home</a></p>

@@ -21,8 +21,6 @@
                 <li><a href="{{ url_for('login') }}">Login</a></li>
                 <li><a href="{{ url_for('register') }}">Register</a></li>
             {% endif %}
-            {# You have "Recipe History" twice in your navbar, you can remove one if you like #}
-            <li><a href="{{ url_for('view_history') }}">Recipe History</a></li>
         </ul>
     </nav>
     <div class="container">
@@ -89,7 +87,7 @@
                         {% endif %}
                         {% endfor %}
                          </ul>
-{% endif %}
+                        {% endif %}
                         <form action="{{ url_for('delete_meal', meal_id=meal.id) }}" method="POST" style="display:inline;">
                             <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete \'{{ meal.meal_idea }}\'?');">
                                 &times; {# HTML entity for multiplication sign, commonly used as an 'X' #}

@@ -1,4 +1,3 @@
-
 import sqlite3
 import json
 from contextlib import contextmanager
@@ -36,7 +35,7 @@ class Database:
             if conn:
                 conn.close()
 
-    def create_tables(self): # Renamed from _create_table to be public and callable from app.py
+    def create_tables(self):
         """
         Creates the 'users' and 'meals' tables if they don't exist.
         Includes robust error handling to immediately show issues during table creation.
@@ -58,6 +57,7 @@ class Database:
 
                 # 2. Create 'meals' table
                 # IMPORTANT: Added 'user_id INTEGER NOT NULL,' column definition here
+                # Added ON DELETE CASCADE for better integrity when a user is deleted
                 cursor.execute("""
                     CREATE TABLE IF NOT EXISTS meals (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -80,7 +80,7 @@ class Database:
         try:
             with self._get_connection() as conn:
                 cursor = conn.cursor()
-                # Use pbkdf2:sha256 method for password hashing
+                # Use pbkdf2:sha256 method for password hashing for stronger security
                 password_hash = generate_password_hash(password, method='pbkdf2:sha256')
                 cursor.execute(
                     "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
@@ -103,11 +103,12 @@ class Database:
         """Retrieves a user's details by their username."""
         try:
             with self._get_connection() as conn:
+                # row_factory is already set in _get_connection, no need to set again here
                 cursor = conn.cursor()
                 cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
                 row = cursor.fetchone()
                 if row:
-                    return dict(row) # Return as a dictionary
+                    return dict(row) # Return as a dictionary for consistent access
                 return None # Return None if user not found
         except sqlite3.Error as e:
             print(f"Error retrieving user '{username}': {e}")
@@ -118,7 +119,7 @@ class Database:
         # Ensure 'user' object and 'password_hash' key exist before attempting verification
         if user and "password_hash" in user:
             return check_password_hash(user["password_hash"], password)
-        return False # Return False if user or hash is missing
+        return False # Return False if user or hash is missing (e.g., user not found)
 
     def save_meal(self, meal_idea, user_inputs, recipe_data, user_id):
         """
@@ -129,7 +130,7 @@ class Database:
                 cursor = conn.cursor()
                 user_inputs_json = json.dumps(user_inputs)
                 recipe_data_json = json.dumps(recipe_data)
-                # IMPORTANT: Ensure user_id is included in the INSERT statement
+                # Ensure user_id is included in the INSERT statement
                 cursor.execute(
                     "INSERT INTO meals (user_id, meal_idea, user_inputs, recipe_data) VALUES (?, ?, ?, ?)",
                     (user_id, meal_idea, user_inputs_json, recipe_data_json)
@@ -145,7 +146,7 @@ class Database:
         try:
             with self._get_connection() as conn:
                 cursor = conn.cursor()
-                # Delete only if the meal_id matches AND it belongs to the user_id
+                # Delete only if the meal_id matches AND it belongs to the user_id for security
                 cursor.execute("DELETE FROM meals WHERE id = ? AND user_id = ?", (meal_id, user_id))
                 if cursor.rowcount > 0:
                     print(f"Meal ID {meal_id} deleted successfully by user {user_id}.")

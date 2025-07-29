@@ -2,7 +2,7 @@
 .env
 
 # Python virtual environment
-venv/
+.venv/
 *.pyc
 __pycache__/
 
@@ -10,3 +10,5 @@ __pycache__/
 *.sqlite3 
 instance/
 .flaskenv 
+# crave database
+crave.db

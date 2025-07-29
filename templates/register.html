@@ -6,22 +6,21 @@
     <title>Register - CraveApp</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<header>
-    <nav>
-    <ul class = "nvbar">
-     <li><a href="{{ url_for('index') }}">Home</a></li>
-    <li><a href="{{ url_for('about') }}">About</a></li>
-    <li><a href="{{ url_for('login') }}">Login</a></li>
-    </ul>
-    </nav>
+<body>
+    <header>
+        <nav>
+            <ul class="nvbar">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('about') }}">About</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+            </ul>
+        </nav>
     </header>
 <body>
     <div class="container">
-       
-
         <main>
             <h1>Register for CraveApp</h1>
-            
+
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     <div class="messages">
@@ -37,20 +36,20 @@
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                
+
                 <button type="submit" class="btn-primary">Register</button>
             </form>
-            
+
             <p class="auth-link">
                 Already have an account? <a href="{{ url_for('login') }}">Login here</a>
             </p>

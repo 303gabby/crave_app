@@ -12,15 +12,13 @@
 </head>
 <body>
    <nav>
-        <ul class = "nvbar">
+        <ul class="nvbar">
             <li><a href="{{ url_for('index') }}">Home</a></li>
             <li><a href="{{ url_for('about') }}">About</a></li>
             <li><a href="{{ url_for('create_recipe_page') }}">Create a New Recipe</a></li>
             <li> <a href="{{ url_for('view_history') }}">Recipe History</a></li>
-
-         
-            {% if user_logged_in %}
-                <li>Welcome, {{ username }}!</li>
+            {% if session.user_id %} {# Using session.user_id for consistent login check #}
+                <li>Welcome, {{ session.username }}!</li> {# Using session.username #}
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
             {% else %}
                 <li><a href="{{ url_for('login') }}">Login</a></li>
@@ -30,29 +28,29 @@
     </nav>
     <br>
     <br>
-    <div class = "land">
-        <div class = "words">
-            <h1 class = "tit">Crave</h1>
-            <ul class = "pl">
+    <div class="land">
+        <div class="words">
+            <h1 class="tit">Crave</h1>
+            <ul class="pl">
                 <li>Real food. </li>
                 <li>Real broke. </li>
                  <li>Real quick. </li>
             </ul>
-            <p id = "blurb">Crave helps you cook delicious, affordable meals based on your budget, mood, tools, time, and diet. Powered by the
+            <p id="blurb">Crave helps you cook delicious, affordable meals based on your budget, mood, tools, time, and diet. Powered by the
                 OpenAI and the Tasty API—if we can’t find it, we’ll create it. Bon appétit!</p>
 
-            {# OPTIONAL: Update these main buttons based on login status too #}
-            {% if user_logged_in %}
-                <button id ="strec"><a href="{{ url_for('create_recipe_page') }}">Create New Recipe</a></button>
-                <button id ="vrhis"><a href="{{ url_for('view_history') }}">View History</a></button>
+            {# Update these main buttons based on login status #}
+            {% if session.user_id %} {# Using session.user_id for consistency #}
+                <button id="strec"><a href="{{ url_for('create_recipe_page') }}">Create New Recipe</a></button>
+                <button id="vrhis"><a href="{{ url_for('view_history') }}">View History</a></button>
             {% else %}
-                <button id ="strec"><a href="{{ url_for('login') }}">Login</a></button>
-                <button id ="vrhis"><a href="{{ url_for('register') }}">Register</a></button>
+                <button id="strec"><a href="{{ url_for('login') }}">Login</a></button>
+                <button id="vrhis"><a href="{{ url_for('register') }}">Register</a></button>
             {% endif %}
             {# End of optional update #}
         </div>
-        <div class = "vis">
-            <img id= "pla" src="{{ url_for('static', filename='images/plate.png') }}" alt="picture of meal on plate">
+        <div class="vis">
+            <img id="pla" src="{{ url_for('static', filename='images/plate.png') }}" alt="picture of meal on plate">
         </div>
     </div>
 </body>
