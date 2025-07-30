@@ -11,9 +11,9 @@ class CreateMeal:
         if not openai_api_key:
             raise ValueError("OPENAI_API_KEY not found in environment variables. Please set it in your .env file.")
             
-        self.client = OpenAI(api_key=openai_api_key) 
+        self.client = OpenAI(api_key=openai_api_key, base_url="https://openrouter.ai/api/v1") 
         
-        self.model_name = 'gpt-4o-mini' 
+        self.model_name = 'meta-llama/llama-3.2-11b-vision-instruct:free' 
 
     def create_meal(self, budget, mood, type_of_meal, tools, time, dietary_restrictions, base_idea=None, variation_prompt=None):
         """
