@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe History - Crave</title>
+    <title>About - Crave</title>
     <link rel="icon" href="/assets/logo.png">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Seaweed+Script&display=swap" rel="stylesheet">
-
-
 </head>
 <body>
       <nav>
+        <div class="logo">
+            <button><a href="{{ url_for('index') }}">Crave</a></button>
+        </div>
         <ul class = "nvbar">
             <li><a href="{{ url_for('index') }}">Home</a></li>
             <li><a href="{{ url_for('about') }}">About</a></li>
