@@ -18,17 +18,18 @@ body {
 
 .container {
     max-width: 600px;
-    margin: 10px auto;
+    margin: 50px auto;
     background: #5E9B53;
     padding: 30px;
     border-radius: 8px;
 }
 
 .auth-link{
+    margin-top: 10px;
     color: white;
 }
 .auth-link a{
-    color: red;
+    color: white;
     font-weight: 800;
 }
 nav{
@@ -102,6 +103,7 @@ ol{
 .vwhis:hover{
     background-color: #a84343;
     border-color: #D95B5C;
+    text-decoration: none;
 }
 
 .qkrem{
@@ -165,6 +167,9 @@ ol{
     line-height: 50px;  
     text-decoration: none; 
 }
+.strec a:hover{ 
+    text-decoration: none; 
+}
 
 .strec:hover{
     background-color:#c15252;
@@ -177,12 +182,14 @@ ol{
 .vrhis:hover{
    background-color: #4f8546;
    color: white;
-    border-width: 4px;
 }
 .vrhis a{
     color: white;
     text-decoration: none;
     line-height: 50px;
+}
+.vrhis a:hover{
+    text-decoration: none;
 }
 .words{
     display: flex;
@@ -272,7 +279,7 @@ form button {
 }
 
 form button:hover {
-    background-color: #4cae4c;
+    background-color: #285328;
 }
 .rec{
     display: flex;
