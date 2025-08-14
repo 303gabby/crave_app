@@ -6,7 +6,7 @@ const closeBtnEl = document.querySelector('.x-mark-button');
 
 menuBtnEl.addEventListener('click', (e) => {
     e.preventDefault()
-    navbarEl.classList.toggle('show');
+    navbarEl.classList.add('show');
 })
 
 closeBtnEl.addEventListener('click', (e) => {

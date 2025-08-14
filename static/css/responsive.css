@@ -3,30 +3,36 @@
     body {
         padding: 10px;
     }
+
+    /* nav bar starts */
+
     nav{
         padding: 10px 15px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        position: relative;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
     }
     .nvbar{
         position: absolute;
-        top: 0;
-        right: -600px;
+        top: -10px;
+        width: 100vw;
         height: 100vh;
-        width: 100%;;
+        right: -1000px;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
         background-color: whitesmoke;
-        box-shadow: 5px 0px 40px rgba(0, 0, 0, 0.7);
     }
     .x-mark-button{
         display: block;
         position: absolute;
-        top: 10px; left: 10px;
+        top: 12px; left: 12px;
         border: none;
         font-size: 25px;
         color: #D95B5C;
@@ -42,6 +48,43 @@
         cursor: pointer;
     }
     .show{
-        right: 0;
+        right: -10px;
     }
+    .nvbar li a{
+        color: #D95B5C;
+        font-size: 22px;
+    }
+    .nvbar li{
+        padding: 3px;
+        padding-right: 35px;
+    }
+    /* nav bar ends */
+
+    /* homepage starts*/
+    .land{
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        margin-top: 50px;
+        
+    }
+    .vis{
+        display: none;
+    }
+    .tit{
+        font-size: 150px;
+        margin-bottom: -40px;
+    }
+    #blurb{
+        font-size: 18px;
+    }
+    .pl{
+        font-size: 28px;
+    }
+    .btn{
+        width: 100%;
+        font-size: 18px;
+
+    }
+        /* homepage ends*/
 }
