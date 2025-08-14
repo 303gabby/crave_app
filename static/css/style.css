@@ -16,6 +16,11 @@ body {
     color: #333;
 }
 
+/* hide elements */
+.hidden{
+    display: none;
+}
+
 .container {
     max-width: 600px;
     margin: 50px auto;
@@ -53,7 +58,7 @@ nav{
 
 .logo button a{
     text-decoration: none;
-    font-size: 30px;
+    font-size: 40px;
     font-family: 'Seaweed Script', cursive;
     color: #D95B5C;
     font-weight: bold;

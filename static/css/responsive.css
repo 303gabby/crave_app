@@ -1,0 +1,47 @@
+/* Add breakpoints for mobile screens */
+@media only screen and (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    nav{
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+    }
+    .nvbar{
+        position: absolute;
+        top: 0;
+        right: -600px;
+        height: 100vh;
+        width: 100%;;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background-color: whitesmoke;
+        box-shadow: 5px 0px 40px rgba(0, 0, 0, 0.7);
+    }
+    .x-mark-button{
+        display: block;
+        position: absolute;
+        top: 10px; left: 10px;
+        border: none;
+        font-size: 25px;
+        color: #D95B5C;
+        background: none;
+        cursor: pointer;
+    }
+    .menu-button{
+        border: none;
+        display: block;
+        font-size: 30px;
+        color: #D95B5C;
+        background: none;
+        cursor: pointer;
+    }
+    .show{
+        right: 0;
+    }
+}

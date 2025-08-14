@@ -6,6 +6,9 @@
     <title>Crave - Personalized Meals for College Students</title>
     <link rel="icon" href="{{ url_for('static', filename='assets/logo.png') }}"> {# Assuming logo.png is in static/assets #}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <!-- Link to font awesome cdn -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <nav>
@@ -24,7 +27,17 @@
                 <li><a href="{{ url_for('login') }}">Login</a></li>
                 <li><a href="{{ url_for('register') }}">Register</a></li>
             {% endif %}
+            <button class="x-mark-button">
+                <span>
+                    <i class="fa-solid fa-xmark"></i>
+                </span>
+            </button>
         </ul>
+        <button class="menu-button hidden">
+            <span>
+                <i class="fa-solid fa-bars"></i>
+            </span>
+        </button>
     </nav>
 
     <div class="land">
@@ -54,5 +67,8 @@
             <img id="pla" src="{{ url_for('static', filename='images/plate.png') }}" alt="picture of meal on plate">
         </div>
     </div>
+
+    <!-- Connect the js file -->
+     <script src="{{ url_for('static', filename='js/script.js')}}" defer></script>
 </body>
 </html>
