@@ -1,0 +1,19 @@
+/* Add breakpoints for mobile screens */
+@media only screen and (max-width: 600px) {
+    body {
+        padding: 15px;
+    }
+    /* Login page */
+    .container{
+        margin: 140px auto;
+    }
+    nav{
+        padding: 20px 15px;
+    }
+    .nvbar li{
+        padding-left: 10px;
+    }
+
+
+
+}
