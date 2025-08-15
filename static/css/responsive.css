@@ -19,7 +19,7 @@
     }
     .nvbar{
         position: absolute;
-        top: -10px;
+        top: 0;
         width: 100vw;
         height: 100vh;
         right: -1000px;
@@ -32,7 +32,7 @@
     .x-mark-button{
         display: block;
         position: absolute;
-        top: 30px; left: 12px;
+        top: 20px; left: 12px; 
         border: none;
         font-size: 25px;
         color: #D95B5C;
@@ -97,6 +97,5 @@
         margin-top: 50px;
         margin-bottom: -50px;
 }
-
 
 }
