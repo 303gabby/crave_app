@@ -146,10 +146,6 @@ ol{
 }
 
 .buttons-container{
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    flex-wrap: wrap;
     gap: 10px;
 }
 
@@ -186,6 +182,8 @@ ol{
 .vrhis{
     background-color:#5E9B53;
     color: white; 
+    margin-top: 10px;
+
 }
 .vrhis:hover{
    background-color: #4f8546;
