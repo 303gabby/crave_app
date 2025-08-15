@@ -1,0 +1,125 @@
+/* Add breakpoints for mobile screens */
+@media only screen and (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    /* nav bar starts */
+
+    nav{
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+    }
+    .nvbar{
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100vh;
+        right: -1000px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background-color: whitesmoke;
+    }
+    .x-mark-button{
+        display: block;
+        position: absolute;
+        top: 20px; left: 12px; 
+        border: none;
+        font-size: 25px;
+        color: #D95B5C;
+        background: none;
+        cursor: pointer;
+    }
+    .menu-button{
+        border: none;
+        display: block;
+        font-size: 30px;
+        color: #D95B5C;
+        background: none;
+        cursor: pointer;
+    }
+    .show{
+        right: 0;
+    }
+    .nvbar li a{
+        color: #D95B5C;
+        font-size: 22px;
+    }
+    .nvbar li{
+        padding: 3px;
+        padding-right: 35px;
+    }
+    /* nav bar ends */
+
+    /* homepage starts*/
+    .land{
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        margin-top: 50px;
+        
+    }
+    .vis{
+        display: none;
+    }
+    .tit{
+        font-size: 150px;
+        margin-bottom: -40px;
+    }
+    #blurb{
+        font-size: 18px;
+    }
+    .pl{
+        font-size: 28px;
+    }
+    .btn{
+        width: 100%;
+        font-size: 18px;
+
+    }
+
+        /* homepage ends*/
+    .piss{
+        padding: 15px;
+        font-size: 18px;
+    }
+    .tit2{
+        font-size: 140px;
+        margin-top: 50px;
+        margin-bottom: -50px;
+    }
+    .container{
+        margin: 140px auto;
+        padding: 15px;
+    }
+    .mt{
+        margin-top: 40px;
+    }
+
+    /* create recipe page starts */
+    .rec{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+    }
+    .instr{
+        padding: 15px;
+    }
+
+    .recipe-card {
+        padding: 10px;
+    }
+    /* create recipe page ends */
+
+}

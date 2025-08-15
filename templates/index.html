@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crave - Personalized Meals for College Students</title>
     <link rel="icon" href="{{ url_for('static', filename='assets/logo.png') }}"> {# Assuming logo.png is in static/assets #}
-    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Seaweed+Script&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <!-- Link to font awesome cdn -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-   <nav>
+    <nav>
+        <div class="logo">
+            <button><a href="{{ url_for('index') }}">Crave</a></button>
+        </div>
         <ul class="nvbar">
             <li><a href="{{ url_for('index') }}">Home</a></li>
             <li><a href="{{ url_for('about') }}">About</a></li>
@@ -24,34 +27,48 @@
                 <li><a href="{{ url_for('login') }}">Login</a></li>
                 <li><a href="{{ url_for('register') }}">Register</a></li>
             {% endif %}
+            <button class="x-mark-button hidden">
+                <span>
+                    <i class="fa-solid fa-xmark"></i>
+                </span>
+            </button>
         </ul>
+        <button class="menu-button hidden">
+            <span>
+                <i class="fa-solid fa-bars"></i>
+            </span>
+        </button>
     </nav>
-    <br>
-    <br>
+
     <div class="land">
         <div class="words">
             <h1 class="tit">Crave</h1>
-            <ul class="pl">
-                <li>Real food. </li>
-                <li>Real broke. </li>
-                 <li>Real quick. </li>
-            </ul>
+            <div class="pl">
+                <span>Real food. </span>
+                <span>Real broke. </span>
+                <span>Real quick. </span>
+            </div>
             <p id="blurb">Crave helps you cook delicious, affordable meals based on your budget, mood, tools, time, and diet. Powered by the
-                OpenAI, Tasty API, and Google Places API —if we can’t find it, we’ll create it. Bon appétit!</p>
+                OpenAI, Tasty API, and Google Places API — if we can’t find it, we’ll create it. Bon appétit!</p>
 
            
-            {% if session.user_id %} {# Using session.user_id for consistency #}
-                <button id="strec"><a href="{{ url_for('create_recipe_page') }}">Create New Recipe</a></button>
-                <button id="vrhis"><a href="{{ url_for('view_history') }}">View History</a></button>
-            {% else %}
-                <button id="strec"><a href="{{ url_for('login') }}">Login</a></button>
-                <button id="vrhis"><a href="{{ url_for('register') }}">Register</a></button>
-            {% endif %}
+            <div class="buttons-container">
+                {% if session.user_id %} {# Using session.user_id for consistency #}
+                    <button class="strec btn"><a href="{{ url_for('create_recipe_page') }}">Create New Recipe</a></button>
+                    <button class="vrhis btn"><a href="{{ url_for('view_history') }}">View History</a></button>
+                {% else %}
+                    <button class="strec btn"><a href="{{ url_for('login') }}">Login</a></button>
+                    <button class="vrhis btn"><a href="{{ url_for('register') }}">Register</a></button>
+                {% endif %}
+            </div>
           
         </div>
         <div class="vis">
             <img id="pla" src="{{ url_for('static', filename='images/plate.png') }}" alt="picture of meal on plate">
         </div>
     </div>
+
+    <!-- Connect the js file -->
+     <script src="{{ url_for('static', filename='js/script.js')}}" defer></script>
 </body>
 </html>
