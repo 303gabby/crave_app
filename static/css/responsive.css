@@ -99,6 +99,27 @@
     }
     .container{
         margin: 140px auto;
+        padding: 15px;
     }
+    .mt{
+        margin-top: 40px;
+    }
+
+    /* create recipe page starts */
+    .rec{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+    }
+    .instr{
+        padding: 15px;
+    }
+
+    .recipe-card {
+        padding: 10px;
+    }
+    /* create recipe page ends */
 
 }

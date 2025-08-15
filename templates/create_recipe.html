@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Seaweed+Script&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <!-- Link to font awesome cdn -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <div id="loading-overlay" class="loading-overlay">
@@ -31,58 +34,69 @@
                 <li><a href="{{ url_for('login') }}">Login</a></li>
                 <li><a href="{{ url_for('register') }}">Register</a></li>
             {% endif %}
+            <button class="x-mark-button hidden">
+                <span>
+                    <i class="fa-solid fa-xmark"></i>
+                </span>
+            </button>
         </ul>
+        <button class="menu-button hidden">
+            <span>
+                <i class="fa-solid fa-bars"></i>
+            </span>
+        </button>
     </nav>
     <br>
     <br>
    
     <div class = "rec">
-     <div class = "instr">
-      <h1 class = "tit">Crave</h1>
-      <h2 class = "qkrem">How to Use The Site</h2>
-      <ol class = "inst">
-        <li> Fill in your preferences.</li>
-        <li>Sit back and wait for your recommendation.</li>
-        <li>If you like it, enjoy cooking!</li>
-        <li>Want a variation? We have those options!</li>
-      
-      </ol>
-      <button class="strec btn"><a href="{{ url_for('view_history') }}">View Recipe History</a></button>
-      </div>
-    <div class="container">
- 
-        <h1 id = "fortit">Let's Create Something Delicious!</h1>
-        <hr>
-        {% if error_message %}
-            <p class="error">{{ error_message }}</p>
-        {% endif %}
-        <form method="POST" action="/create_recipe_page">
-            <label for="type_of_meal">What type of meal is this? (breakfast, lunch, dinner, or a snack?)</label>
-            <input type="text" id="type_of_meal" name="type_of_meal" placeholder="Enter type of meal (breakfast, lunch, dinner, or a snack?)" required>
+        <div class = "instr">
+            <h1 class = "tit">Crave</h1>
+            <h2 class = "qkrem">How to Use The Site</h2>
+            <ol class = "inst">
+                <li> Fill in your preferences.</li>
+                <li>Sit back and wait for your recommendation.</li>
+                <li>If you like it, enjoy cooking!</li>
+                <li>Want a variation? We have those options!</li>
+            
+            </ol>
+            <button class="strec btn"><a href="{{ url_for('view_history') }}">View Recipe History</a></button>
+        </div>
+        <div class="container mt">
+            <h1 id = "fortit">Let's Create Something Delicious!</h1>
+            <hr>
+            {% if error_message %}
+                <p class="error">{{ error_message }}</p>
+            {% endif %}
+            <form method="POST" action="/create_recipe_page">
+                <label for="type_of_meal">What type of meal is this? (breakfast, lunch, dinner, or a snack?)</label>
+                <input type="text" id="type_of_meal" name="type_of_meal" placeholder="Enter type of meal (breakfast, lunch, dinner, or a snack?)" required>
 
-            <label for="budget">What's your budget? (ex: $5, $10, $15)</label>
-            <input type="text" id="budget" name="budget" placeholder="Enter budget amount (ex: $5, $10, $15)" required>
+                <label for="budget">What's your budget? (ex: $5, $10, $15)</label>
+                <input type="text" id="budget" name="budget" placeholder="Enter budget amount (ex: $5, $10, $15)" required>
 
-            <label for="mood">What type of food are you in the mood for? (ex: comforting, healthy, Italian)</label>
-            <input type="text" id="mood" name="mood" placeholder="Enter type of food (ex: comforting, healthy, Italian)" required>
+                <label for="mood">What type of food are you in the mood for? (ex: comforting, healthy, Italian)</label>
+                <input type="text" id="mood" name="mood" placeholder="Enter type of food (ex: comforting, healthy, Italian)" required>
 
-            <label for="tools">What kitchen tools do you have? (comma-separated, ex: pan, oven, microwave)</label>
-            <input type="text" id="tools" name="tools" placeholder="Enter kitchen tools (ex: pan, oven, microwave)" required>
+                <label for="tools">What kitchen tools do you have? (comma-separated, ex: pan, oven, microwave)</label>
+                <input type="text" id="tools" name="tools" placeholder="Enter kitchen tools (ex: pan, oven, microwave)" required>
 
-            <label for="time">How much time do you want to spend cooking? (ex: 30 minutes, 1 hour)</label>
-            <input type="text" id="time" name="time" placeholder="Enter time (ex: 30 minutes, 1 hour)" required>
+                <label for="time">How much time do you want to spend cooking? (ex: 30 minutes, 1 hour)</label>
+                <input type="text" id="time" name="time" placeholder="Enter time (ex: 30 minutes, 1 hour)" required>
 
-            <label for="dietary_restrictions">Any dietary restrictions? (comma-separated, ex: vegetarian, gluten-free)</label>
-            <input type="text" id="dietary_restrictions" name="dietary_restrictions" placeholder="Enter dietary restrictions (ex: vegetarian, gluten-free)">
+                <label for="dietary_restrictions">Any dietary restrictions? (comma-separated, ex: vegetarian, gluten-free)</label>
+                <input type="text" id="dietary_restrictions" name="dietary_restrictions" placeholder="Enter dietary restrictions (ex: vegetarian, gluten-free)">
 
-            <button type="submit" id="submit-recipe-button">Get My Meal Idea</button>
-        </form>
-    </div>
+                <button type="submit" id="submit-recipe-button">Get My Meal Idea</button>
+            </form>
+        </div>
     </div>
     <script>
         document.getElementById('submit-recipe-button').addEventListener('click', function() {
             document.getElementById('loading-overlay').style.display = 'flex';
         });
     </script>
+    <!-- Connect the js file -->
+    <script src="{{ url_for('static', filename='js/script.js')}}" defer></script>
 </body>
 </html>
