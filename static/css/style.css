@@ -6,7 +6,11 @@ body {
     background-color:white;
     color: #333;
 }
-
+.cred{
+    align-items: flex-start;
+    color: #D95B5C;
+    padding-right: 900px;
+}
 .container {
     max-width: 600px;
     margin: 10px auto;
