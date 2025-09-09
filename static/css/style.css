@@ -19,7 +19,9 @@ body {
     border-radius: 8px;
     font-family:'Lato', sans-serif;
 }
-
+#fortit{
+    color: white;
+}
 .auth-link{
     color: white;
 }
@@ -76,6 +78,7 @@ ol{
 }
 .qkrem{
     color: #D95B5C;
+    padding-right: 120px;
 }
 .pl li{
    color: #5E9B53;
